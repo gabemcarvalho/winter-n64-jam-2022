@@ -8,16 +8,16 @@ public class DialogueUI : MonoBehaviour
     [SerializeField] private GameObject dialogueBox;
     [SerializeField] private TextMeshProUGUI tmpTextbox;
     [SerializeField] private TextMeshProUGUI tmpNamebox;
-    [SerializeField] private DialogueObject testDialogue;
-    [SerializeField] private Animator animator;
 
     public static Action<DialogueObject> EventShowDialogue;
     public static event Action EventResumePlayerControl;
 
+    private Animator animator;
     private RevealText revealText;
 
     private void Start()
     {
+        animator = dialogueBox.GetComponent<Animator>();
         revealText = GetComponent<RevealText>();
         CloseDialogueBox();
         EventShowDialogue += ShowDialogue;
@@ -41,7 +41,7 @@ public class DialogueUI : MonoBehaviour
 
         animator.Play("animEntry");
         yield return 0; // wait for next frame
-        yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
+        //yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length); // ignore these for this game
         animator.Play("animIdle");
 
         foreach (string dialogue in dialogueObject.Dialogue)
@@ -54,7 +54,7 @@ public class DialogueUI : MonoBehaviour
 
         animator.Play("animExit");
         yield return 0; // wait for next frame
-        yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
+        //yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
         
         tmpNamebox.text = string.Empty;
 

@@ -23,7 +23,7 @@ public class PlayerController : MonoBehaviour
     private bool canMove;
 
     [SerializeField] private float interactionDistance = 0.5f;
-    //private Interactable interactableFocus;
+    private Interactable interactableFocus;
 
     private CharacterController characterController;
     private Animator animator;
@@ -40,13 +40,13 @@ public class PlayerController : MonoBehaviour
     {
         characterController = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
-        //DialogueUI.EventResumePlayerControl += RemoveFocus;
+        DialogueUI.EventResumePlayerControl += RemoveFocus;
         canMove = true;
     }
 
     private void OnDestroy()
     {
-        //DialogueUI.EventResumePlayerControl -= RemoveFocus;
+        DialogueUI.EventResumePlayerControl -= RemoveFocus;
     }
 
     void OnControllerColliderHit(ControllerColliderHit hit)
@@ -67,19 +67,19 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        /*
+
         if (interactableFocus != null)
         {
             // Face interacting object
-            animator.SetBool("isRunning", false);
-            animator.SetBool("isFlying", false);
+            //animator.SetBool("isRunning", false);
+            //animator.SetBool("isFlying", false);
             Vector3 interactDir = (interactableFocus.transform.position - transform.position).normalized;
             Quaternion lookRotation = Quaternion.LookRotation(new Vector3(interactDir.x, 0f, interactDir.z));
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5.0f);
 
             return;
         }
-        */
+
 
         // ground check
         RaycastHit groundHit;
@@ -160,9 +160,9 @@ public class PlayerController : MonoBehaviour
         }
 
         //jumping / interacting
-        /*
+
         RaycastHit interactableHit;
-        bool interactableCastResult = Physics.Raycast(transform.position + Vector3.up * (characterController.radius + characterController.skinWidth), transform.forward, out interactableHit, interactionDistance);
+        bool interactableCastResult = Physics.Raycast(transform.position, transform.forward, out interactableHit, interactionDistance);
         if (interactableCastResult == true)
         {
             Interactable interactable = interactableHit.collider.GetComponent<Interactable>();
@@ -183,11 +183,11 @@ public class PlayerController : MonoBehaviour
             interactIndicator.GetComponent<IndicatorMotion>().ResetBobTime();
             interactIndicator.SetActive(false);
         }
-        */
+
 
         if (isGrounded && Input.GetButtonDown("Jump"))
         {
-            /*
+
             if (interactableCastResult == true)
             {
                 Interactable interactable = interactableHit.collider.GetComponent<Interactable>();
@@ -197,10 +197,9 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-            */
                 // jump
                 verticalSpeed = Mathf.Sqrt(jumpHeight * 2f * gravityUp);
-            //}
+            }
         }
 
         if (verticalSpeed > 0)
@@ -220,11 +219,11 @@ public class PlayerController : MonoBehaviour
         //animator.SetBool("isFalling", verticalSpeed < 0.2f);
     }
 
-    /*
+
     void SetFocus(Interactable newFocus)
     {
-        animator.SetBool("isRunning", false);
-        animator.SetBool("isFlying", false);
+        //animator.SetBool("isRunning", false);
+        //animator.SetBool("isFlying", false);
         interactableFocus = newFocus;
 
         DialogueUI.EventShowDialogue.Invoke(interactableFocus.InteractionDialogue);
@@ -234,6 +233,6 @@ public class PlayerController : MonoBehaviour
     {
         interactableFocus = null;
     }
-    */
+
 
 }

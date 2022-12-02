@@ -53,6 +53,11 @@ public class RevealText : MonoBehaviour
                 i -= k;
             }
 
+            if (current.ToString().Equals(" "))
+            {
+                continue;
+            }
+
             yield return new WaitForSeconds(time);
         }
 
