@@ -7,6 +7,8 @@ public class UIActions : MonoBehaviour
 {
     public static Action EventPauseGame;
     public static Action EventResumeGame;
+    public static Action<ThirdPersonCamera.Targetable> EventEnterTextboxCamera;
+    public static Action<bool> EventExitTextboxCamera;
 
     void Awake()
     {

@@ -77,6 +77,7 @@ namespace ThirdPersonCamera
         public bool pivotRotationEnabled;
         [Tooltip("When enabled the pivot will smoothly slerp to the new pivot angles")]
         public bool smoothPivot = false;
+        public float smoothPivotSpeed = 10.0f;
         [Tooltip("Enable overriding the pivot with the public variable 'pivotAngles'")]
         public bool customPivot = false;
         [Tooltip("Use to override pivot")]
@@ -576,7 +577,7 @@ namespace ThirdPersonCamera
                 if (!customPivot)
                 {                  
                     if (smoothPivot)
-                        currentPivotRotation = Quaternion.Slerp(currentPivotRotation, pivotRotation, Time.deltaTime);
+                        currentPivotRotation = Quaternion.RotateTowards(currentPivotRotation, pivotRotation, Time.deltaTime * smoothPivotSpeed);
                     else
                         currentPivotRotation = pivotRotation;
                 }

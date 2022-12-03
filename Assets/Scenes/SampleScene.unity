@@ -586,7 +586,6 @@ GameObject:
   m_Component:
   - component: {fileID: 725545533}
   - component: {fileID: 725545532}
-  - component: {fileID: 725545531}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: Untagged
@@ -594,14 +593,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &725545531
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 725545530}
-  m_Enabled: 1
 --- !u!20 &725545532
 Camera:
   m_ObjectHideFlags: 0
@@ -823,8 +814,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 780574637}
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: -1.13, z: 0}
-  m_LocalScale: {x: 3.39, y: 3.3900013, z: 3.3900013}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 826953563}
@@ -1005,7 +996,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 826953559}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.856, z: 0}
+  m_LocalPosition: {x: 0, y: 0.25, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -1229,6 +1220,8 @@ GameObject:
   - component: {fileID: 963194232}
   - component: {fileID: 963194231}
   - component: {fileID: 963194230}
+  - component: {fileID: 963194236}
+  - component: {fileID: 963194235}
   - component: {fileID: 963194229}
   - component: {fileID: 963194234}
   - component: {fileID: 963194233}
@@ -1394,7 +1387,7 @@ MonoBehaviour:
   desiredDistance: 5
   collisionDistance: 0.2
   zoomOutStepValue: 1
-  zoomOutStepValuePerFrame: 1
+  zoomOutStepValuePerFrame: 0.5
   hideSkinnedMeshRenderers: 0
   collisionLayer:
     serializedVersion: 2
@@ -1412,8 +1405,9 @@ MonoBehaviour:
   smartPivotOnlyGround: 1
   floorNormalUp: {x: 0, y: 1, z: 0}
   maxFloorDot: 0.95
-  pivotRotationEnabled: 0
-  smoothPivot: 0
+  pivotRotationEnabled: 1
+  smoothPivot: 1
+  smoothPivotSpeed: 80
   customPivot: 0
   pivotAngles: {x: 0, y: 0, z: 0}
   maxRaycastHitCount: 6
@@ -1450,8 +1444,50 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 767e288acb4d65d40aee2bfc5a7d845f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  normalCameraOffset: {x: 0, y: 0.5, z: 0}
+  targetChangeLerp: 3
   xSensitivity: 4.5
   ySensitivity: 3
+--- !u!114 &963194235
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cd5d8c4cc8e13e499f298e8f96d99f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cycleCooldown: 1.5
+  mouseLockOnInput: 
+  mouseCycleTargetNext: 
+  mouseCycleTargetPrevious: 
+  keyboardLockOnInput: 
+  keyboardCycleTargetNext: 
+  keyboardCycleTargetPrevious: 
+  buttonLockOnInput: []
+  buttonCycleTargetNext: []
+  buttonCycleTargetPrevious: []
+  inputSamplingEnabled: 1
+--- !u!114 &963194236
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc9f49033fa732c469ece58ae2760ef2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  followTarget: {fileID: 0}
+  rotationSpeed: 10
+  tiltVector: {x: 0, y: 0, z: 0}
+  normalizeHeight: 0
+  disableTime: 1.5
 --- !u!1 &1237803387
 GameObject:
   m_ObjectHideFlags: 0
@@ -1602,6 +1638,7 @@ GameObject:
   - component: {fileID: 1451397269}
   - component: {fileID: 1451397268}
   - component: {fileID: 1451397272}
+  - component: {fileID: 1451397273}
   m_Layer: 8
   m_Name: NPC
   m_TagString: Untagged
@@ -1702,6 +1739,19 @@ MonoBehaviour:
   interactionDialogue: {fileID: 11400000, guid: e0f654b876d37a1408da62ad3dfa55c4, type: 2}
   indicatorHeight: 1
   radius: 2
+--- !u!114 &1451397273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1451397267}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b22447f9f31540541b22ae3e409a57da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: 0, y: 0, z: 0}
 --- !u!1 &1504869822
 GameObject:
   m_ObjectHideFlags: 0
@@ -1967,7 +2017,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1589859393}
   - component: {fileID: 1589859392}
-  - component: {fileID: 1589859391}
   m_Layer: 0
   m_Name: UI Camera
   m_TagString: Untagged
@@ -1975,14 +2024,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &1589859391
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1589859390}
-  m_Enabled: 1
 --- !u!20 &1589859392
 Camera:
   m_ObjectHideFlags: 0

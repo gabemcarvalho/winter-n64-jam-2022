@@ -226,12 +226,15 @@ public class PlayerController : MonoBehaviour
         //animator.SetBool("isFlying", false);
         interactableFocus = newFocus;
 
+        var target = newFocus.GetComponentInParent<ThirdPersonCamera.Targetable>();
+        UIActions.EventEnterTextboxCamera?.Invoke(target);
         DialogueUI.EventShowDialogue.Invoke(interactableFocus.InteractionDialogue);
     }
 
     void RemoveFocus()
     {
         interactableFocus = null;
+        UIActions.EventExitTextboxCamera?.Invoke(true);
     }
 
 
