@@ -15,12 +15,16 @@ public class CursorController : MonoBehaviour
 
         UIActions.EventPauseGame += UnlockCursor;
         UIActions.EventResumeGame += LockCursor;
+        UIActions.EventUnlockCursor += UnlockCursor;
+        UIActions.EventLockCursor += LockCursor;
     }
 
     private void OnDestroy()
     {
         UIActions.EventPauseGame -= UnlockCursor;
         UIActions.EventResumeGame -= LockCursor;
+        UIActions.EventUnlockCursor -= UnlockCursor;
+        UIActions.EventLockCursor -= LockCursor;
     }
 
     public void LockCursor()

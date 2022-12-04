@@ -29,6 +29,8 @@ public class CameraController : MonoBehaviour
 
         UIActions.EventPauseGame += DisableCamera;
         UIActions.EventResumeGame += EnableCamera;
+        UIActions.EventUnlockCursor += DisableCamera;
+        UIActions.EventLockCursor += EnableCamera;
         UIActions.EventEnterTextboxCamera += EnterTextboxCamera;
         UIActions.EventExitTextboxCamera += ExitTextboxCamera;
 
@@ -39,6 +41,8 @@ public class CameraController : MonoBehaviour
     {
         UIActions.EventPauseGame -= DisableCamera;
         UIActions.EventResumeGame -= EnableCamera;
+        UIActions.EventUnlockCursor -= DisableCamera;
+        UIActions.EventLockCursor -= EnableCamera;
         UIActions.EventEnterTextboxCamera -= EnterTextboxCamera;
         UIActions.EventExitTextboxCamera -= ExitTextboxCamera;
     }
@@ -54,7 +58,7 @@ public class CameraController : MonoBehaviour
         cameraInput.enabled = false;
         freeForm.stationaryModeHorizontal = ThirdPersonCamera.StationaryModeType.Fixed;
         freeForm.stationaryModeVertical = ThirdPersonCamera.StationaryModeType.Fixed;
-        Time.timeScale = 0;
+        //Time.timeScale = 0;
     }
 
     void EnableCamera()
@@ -62,7 +66,7 @@ public class CameraController : MonoBehaviour
         cameraInput.enabled = true;
         freeForm.stationaryModeHorizontal = ThirdPersonCamera.StationaryModeType.Free;
         freeForm.stationaryModeVertical = ThirdPersonCamera.StationaryModeType.Free;
-        Time.timeScale = 1.0f;
+        //Time.timeScale = 1.0f;
     }
 
     void EnterTextboxCamera(ThirdPersonCamera.Targetable target)

@@ -5,7 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(CharacterController), typeof(Animator))]
 public class PlayerController : MonoBehaviour
 {
-    public Transform cam;
+    public Camera camera;
     public GameObject interactIndicator;
     public float groundDistance = 0.2f;
     public LayerMask groundMask;
@@ -25,6 +25,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float interactionDistance = 0.5f;
     private Interactable interactableFocus;
 
+    [SerializeField] string snowballPrefabResource = "Decorations/Snowball";
+    private GameObject snowballPrefab;
+
     private CharacterController characterController;
     private Animator animator;
 
@@ -34,6 +37,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 slopeVelocity = Vector3.zero;
     private Vector3 hitNormal = Vector3.zero;
 
+    private bool aimMode = false;
 
     // Start is called before the first frame update
     void Start()
@@ -42,6 +46,8 @@ public class PlayerController : MonoBehaviour
         animator = GetComponent<Animator>();
         DialogueUI.EventResumePlayerControl += RemoveFocus;
         canMove = true;
+
+        snowballPrefab = Resources.Load(snowballPrefabResource) as GameObject;
     }
 
     private void OnDestroy()
@@ -80,6 +86,29 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            UIActions.EventUnlockCursor?.Invoke();
+            aimMode = true;
+        }
+        else if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            UIActions.EventLockCursor?.Invoke();
+            aimMode = false;
+        }
+
+        if (aimMode && Input.GetMouseButtonDown(0))
+        {
+            Vector2 mousePos = GetGameCameraMousePosition();
+
+            Vector3 aim = camera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, 5.0f));
+            Vector3 mouseDirection = aim - camera.transform.position;
+
+            GameObject snowball = Instantiate(snowballPrefab, camera.transform.position, Quaternion.identity);
+            snowball.transform.LookAt(aim);
+            Rigidbody b = snowball.GetComponent<Rigidbody>();
+            b.AddForce(mouseDirection.normalized * 500f);
+        }
 
         // ground check
         RaycastHit groundHit;
@@ -110,7 +139,7 @@ public class PlayerController : MonoBehaviour
 
         if (direction.magnitude >= 0.1f)
         {
-            float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
+            float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + camera.transform.eulerAngles.y;
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
             transform.rotation = Quaternion.Euler(0f, angle, 0f);
 
@@ -237,5 +266,34 @@ public class PlayerController : MonoBehaviour
         UIActions.EventExitTextboxCamera?.Invoke(true);
     }
 
+    static Vector2 GetGameCameraMousePosition()
+    {
+        // transform screen coords into 320x240 coords
+        Vector3 mousePos = Input.mousePosition;
+        Vector2 screen = new Vector2(Screen.width, Screen.height);
+        float aspectRatio = screen.x / screen.y;
+        if (aspectRatio > 4.0f / 3.0f) // wider resolution
+        {
+            float ratio = screen.y / 240.0f;
+            float edge = 160.0f * ratio;
+            float offset = screen.x / 2.0f - edge;
+            mousePos.x = Math.Clamp(mousePos.x, screen.x * 0.5f - edge, screen.x * 0.5f + edge) - offset;
 
+            mousePos.x /= ratio;
+            mousePos.y /= ratio;
+        }
+        else // taller resolution (why???)
+        {
+            float ratio = screen.x / 320.0f;
+            float edge = 120.0f * ratio;
+            float offset = screen.y / 2.0f - edge;
+
+            mousePos.y = Math.Clamp(mousePos.y, screen.y * 0.5f - edge, screen.y * 0.5f + edge) - offset;
+
+            mousePos.x /= ratio;
+            mousePos.y /= ratio;
+        }
+
+        return new Vector2(mousePos.x, mousePos.y);
+    }
 }
