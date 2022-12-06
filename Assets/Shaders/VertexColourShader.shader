@@ -52,7 +52,7 @@ Shader "VertexColoredShader"
             {
                 vertexOutput output;
                 output.pos = UnityObjectToClipPos(input.vertex);
-                output.pos.y -= 0.01;
+                output.pos.y -= 0.02;
                 output.col = input.color;
                 return output;
             }

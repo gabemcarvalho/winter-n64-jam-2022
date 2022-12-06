@@ -27,16 +27,20 @@ public class Decoratable : MonoBehaviour
     {
         if (collision.gameObject.layer != decorationLayer) return;
 
-        ContactPoint contactPoint = collision.GetContact(0);
+        ContactPoint contact = collision.GetContact(0);
         
-        Ray contactRay = new Ray(contactPoint.point + contactPoint.normal.normalized * 1.0f, -contactPoint.normal.normalized);
-        bool collided = meshCollider.Raycast(contactRay, out RaycastHit hit, 1.5f);
-        
-        if (collided)
+        // Cast a ray from the contact point in the direction of the collision normal
+        Ray ray = new Ray(contact.point - contact.normal * 0.01f, contact.normal);
+        RaycastHit hit;
+        if (meshCollider.Raycast(ray, out hit, Mathf.Infinity))
         {
-            ColourTriangle(hit.triangleIndex, new Color32(255, 255, 255, 255));
-            //RandomVertexColours();
-            Debug.Log($"hit {hit.triangleIndex}");
+            // Check if the raycast hit a triangle
+            if (hit.triangleIndex >= 0)
+            {
+                Debug.Log($"Triangle {hit.triangleIndex} hit!");
+
+                ColourTriangle(hit.triangleIndex, new Color32(255, 255, 255, 255));
+            }
         }
 
         Destroy(collision.gameObject);
