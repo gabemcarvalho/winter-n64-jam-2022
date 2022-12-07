@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IndicatorMotion : MonoBehaviour
+public class RotateAndBob : MonoBehaviour
 {
     [SerializeField] private Transform indicatorTransform;
     [SerializeField] private float bobPeriod = 1.0f;

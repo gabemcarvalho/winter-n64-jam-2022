@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System;
 using UnityEngine;
 
@@ -20,6 +21,10 @@ public class PlayerController : MonoBehaviour
     public float slideFriction;
     public float slopeSlowDownCoefficient = 1f;
 
+    public List<DecorationInfo> availableDecorations;
+    private List<GameObject> decorationProjectiles;
+    private int activeDecorationIndex;
+
     private bool canMove;
 
     [SerializeField] private float interactionDistance = 0.5f;
@@ -39,6 +44,8 @@ public class PlayerController : MonoBehaviour
 
     private bool aimMode = false;
 
+    private int collectibleLayer;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -48,6 +55,17 @@ public class PlayerController : MonoBehaviour
         canMove = true;
 
         snowballPrefab = Resources.Load(snowballPrefabResource) as GameObject;
+
+        collectibleLayer = LayerMask.NameToLayer("Collectible");
+
+        activeDecorationIndex = 0;
+        decorationProjectiles = new List<GameObject>();
+        foreach (DecorationInfo info in availableDecorations)
+        {
+            GameObject decorationPrefab = Resources.Load(info.projectileResource) as GameObject;
+            decorationProjectiles.Add(decorationPrefab);
+        }
+        UIActions.EventActiveDecorationChanged?.Invoke(availableDecorations[activeDecorationIndex]);
     }
 
     private void OnDestroy()
@@ -104,10 +122,16 @@ public class PlayerController : MonoBehaviour
             Vector3 aim = camera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, 5.0f));
             Vector3 mouseDirection = aim - camera.transform.position;
 
-            GameObject snowball = Instantiate(snowballPrefab, camera.transform.position, Quaternion.identity);
+            GameObject snowball = Instantiate(decorationProjectiles[activeDecorationIndex], camera.transform.position, Quaternion.identity);
             snowball.transform.LookAt(aim);
             Rigidbody b = snowball.GetComponent<Rigidbody>();
             b.AddForce(mouseDirection.normalized * 500f);
+        }
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            activeDecorationIndex = (activeDecorationIndex + 1) % availableDecorations.Count;
+            UIActions.EventActiveDecorationChanged?.Invoke(availableDecorations[activeDecorationIndex]);
         }
 
         // ground check
@@ -198,7 +222,7 @@ public class PlayerController : MonoBehaviour
             if (interactable == null)
             {
                 interactableCastResult = false;
-                interactIndicator.GetComponent<IndicatorMotion>().ResetBobTime(); // this is a hack at best
+                interactIndicator.GetComponent<RotateAndBob>().ResetBobTime(); // this is a hack at best
                 interactIndicator.SetActive(false);
             }
             else
@@ -209,7 +233,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            interactIndicator.GetComponent<IndicatorMotion>().ResetBobTime();
+            interactIndicator.GetComponent<RotateAndBob>().ResetBobTime();
             interactIndicator.SetActive(false);
         }
 
@@ -221,7 +245,7 @@ public class PlayerController : MonoBehaviour
             {
                 Interactable interactable = interactableHit.collider.GetComponent<Interactable>();
                 SetFocus(interactable);
-                interactIndicator.GetComponent<IndicatorMotion>().ResetBobTime();
+                interactIndicator.GetComponent<RotateAndBob>().ResetBobTime();
                 interactIndicator.SetActive(false);
             }
             else
@@ -262,6 +286,7 @@ public class PlayerController : MonoBehaviour
 
     void RemoveFocus()
     {
+        canMove = true;
         interactableFocus = null;
         UIActions.EventExitTextboxCamera?.Invoke(true);
     }
@@ -295,5 +320,23 @@ public class PlayerController : MonoBehaviour
         }
 
         return new Vector2(mousePos.x, mousePos.y);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.layer != collectibleLayer) return;
+
+        canMove = false;
+        Collectible collectible = other.gameObject.GetComponent<Collectible>();
+        AddDecoration(collectible.decorationInfo);
+        DialogueUI.EventShowDialogue.Invoke(collectible.collectionDialog);
+
+        Destroy(other.gameObject);
+    }
+
+    public void AddDecoration(DecorationInfo info)
+    {
+        availableDecorations.Add(info);
+        decorationProjectiles.Add(Resources.Load(info.projectileResource) as GameObject);
     }
 }

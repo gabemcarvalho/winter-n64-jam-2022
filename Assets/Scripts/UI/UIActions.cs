@@ -11,6 +11,7 @@ public class UIActions : MonoBehaviour
     public static Action<bool> EventExitTextboxCamera;
     public static Action EventUnlockCursor;
     public static Action EventLockCursor;
+    public static Action<DecorationInfo> EventActiveDecorationChanged;
 
     void Awake()
     {
