@@ -136,7 +136,12 @@ public class PlayerController : MonoBehaviour
 
         // ground check
         RaycastHit groundHit;
-        bool groundCheckResult = Physics.SphereCast(transform.position, characterController.radius, Vector3.down, out groundHit, characterController.radius + characterController.skinWidth + groundDistance, groundMask);
+        bool groundCheckResult = Physics.SphereCast(transform.position + Vector3.down * (characterController.height / 2.0f - characterController.skinWidth - characterController.radius),
+                                                    characterController.radius,
+                                                    Vector3.down,
+                                                    out groundHit,
+                                                    groundDistance,
+                                                    groundMask);
 
         bool isOnSteepSlope = false;
         if (groundCheckResult)
@@ -264,7 +269,21 @@ public class PlayerController : MonoBehaviour
             verticalSpeed -= gravityDown * Time.deltaTime;
         }
 
+        // ceiling check
+        RaycastHit ceilingHit;
+        bool ceilingCheckResult = Physics.SphereCast(transform.position + Vector3.up * (characterController.height / 2.0f - characterController.skinWidth - characterController.radius),
+                                                    characterController.radius,
+                                                    Vector3.up,
+                                                    out ceilingHit,
+                                                    groundDistance,
+                                                    groundMask);
+
         characterController.Move(Vector3.up * verticalSpeed * Time.deltaTime);
+
+        if (ceilingCheckResult && verticalSpeed > 0)
+        {
+            verticalSpeed = Mathf.Min(0.0f, verticalSpeed);
+        }
 
         //animations
         //animator.SetBool("isRunning", direction.magnitude >= 0.1f);
