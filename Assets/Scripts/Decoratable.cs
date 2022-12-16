@@ -17,6 +17,7 @@ public class Decoratable : MonoBehaviour
     void Awake()
     {
         mesh = GetComponent<MeshFilter>().mesh;
+
         colourList = (new Color32[mesh.vertexCount]).ToList();
         ResetVertexColours();
 
@@ -78,5 +79,6 @@ public class Decoratable : MonoBehaviour
         colourList[triIndex * 3 + 2] = col;
 
         mesh.colors32 = colourList.ToArray(); // doesn't work??
+        GetComponent<MeshFilter>().mesh = mesh;
     }
 }
