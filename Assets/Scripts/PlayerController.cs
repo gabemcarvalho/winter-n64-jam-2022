@@ -45,6 +45,11 @@ public class PlayerController : MonoBehaviour
     private bool aimMode = false;
 
     private int collectibleLayer;
+    private int mudLayer;
+
+    private float mudTime;
+
+    [SerializeField] Transform bucketTransform;
 
     // Start is called before the first frame update
     void Start()
@@ -57,6 +62,7 @@ public class PlayerController : MonoBehaviour
         snowballPrefab = Resources.Load(snowballPrefabResource) as GameObject;
 
         collectibleLayer = LayerMask.NameToLayer("Collectible");
+        mudLayer = LayerMask.NameToLayer("Mud");
 
         activeDecorationIndex = 0;
         decorationProjectiles = new List<GameObject>();
@@ -66,6 +72,8 @@ public class PlayerController : MonoBehaviour
             decorationProjectiles.Add(decorationPrefab);
         }
         UIActions.EventActiveDecorationChanged?.Invoke(availableDecorations[activeDecorationIndex]);
+
+        mudTime = 0.0f;
     }
 
     private void OnDestroy()
@@ -122,7 +130,7 @@ public class PlayerController : MonoBehaviour
             Vector3 aim = camera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, 5.0f));
             Vector3 mouseDirection = aim - camera.transform.position;
 
-            GameObject snowball = Instantiate(decorationProjectiles[activeDecorationIndex], camera.transform.position, Quaternion.identity);
+            GameObject snowball = Instantiate(decorationProjectiles[activeDecorationIndex], bucketTransform.position, Quaternion.identity);
             snowball.transform.LookAt(aim);
             Rigidbody b = snowball.GetComponent<Rigidbody>();
             b.AddForce(mouseDirection.normalized * 500f);
@@ -176,6 +184,7 @@ public class PlayerController : MonoBehaviour
 
             // slow down climbing slopes
             moveDir = moveDir.normalized * movementSpeed;
+
             if (isGrounded && Vector3.Dot(moveDir, groundHit.normal) < 0) // moving up slope
             {
                 moveDir *= 1f + slopeSlowDownCoefficient * Vector3.Dot(moveDir.normalized, groundHit.normal);
@@ -191,6 +200,7 @@ public class PlayerController : MonoBehaviour
                 }
             }
 
+            if (mudTime > 0) moveDir /= 5.0f;
             characterController.Move(moveDir * Time.deltaTime);
         }
 
@@ -256,7 +266,10 @@ public class PlayerController : MonoBehaviour
             else
             {
                 // jump
-                verticalSpeed = Mathf.Sqrt(jumpHeight * 2f * gravityUp);
+                float jumpSpeed = jumpHeight * 2f * gravityUp;
+                if (mudTime > 0) jumpSpeed /= 5.0f;
+
+                verticalSpeed = Mathf.Sqrt(jumpSpeed);
             }
         }
 
@@ -289,6 +302,11 @@ public class PlayerController : MonoBehaviour
         //animator.SetBool("isRunning", direction.magnitude >= 0.1f);
         //animator.SetBool("isGrounded", isGrounded);
         //animator.SetBool("isFalling", verticalSpeed < 0.2f);
+
+        if (mudTime > 0)
+        {
+            mudTime -= Time.deltaTime;
+        }
     }
 
 
@@ -343,19 +361,37 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.layer != collectibleLayer) return;
+        if (other.gameObject.layer == collectibleLayer)
+        {
+            canMove = false;
+            Collectible collectible = other.gameObject.GetComponent<Collectible>();
+            AddDecoration(collectible.decorationInfo);
+            DialogueUI.EventShowDialogue.Invoke(collectible.collectionDialog);
 
-        canMove = false;
-        Collectible collectible = other.gameObject.GetComponent<Collectible>();
-        AddDecoration(collectible.decorationInfo);
-        DialogueUI.EventShowDialogue.Invoke(collectible.collectionDialog);
+            Destroy(other.gameObject);
+        }
+    }
 
-        Destroy(other.gameObject);
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.layer == mudLayer)
+        {
+            mudTime = 0.3f;
+        }
     }
 
     public void AddDecoration(DecorationInfo info)
     {
         availableDecorations.Add(info);
         decorationProjectiles.Add(Resources.Load(info.projectileResource) as GameObject);
+    }
+
+    public void OnFellInLake()
+    {
+        characterController.enabled = false; // need to disable CharacterController before teleporting, because Unity is dumb
+        transform.position = new(-10, 1, 16);
+        characterController.enabled = true;
+
+        verticalSpeed = 0;
     }
 }
