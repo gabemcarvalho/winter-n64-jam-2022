@@ -60,7 +60,7 @@ public class MiniGameScript : MonoBehaviour
         
         if (startMinigame)
         {
-            MiniGame();
+            EnterMiniGame();
             if (Input.GetKeyDown(KeyCode.LeftShift))
             {
                 UIActions.EventUnlockCursor?.Invoke();
@@ -119,38 +119,7 @@ public class MiniGameScript : MonoBehaviour
 
 
 
-    public static Vector2 GetGameCameraMousePosition()
-    {
-        // transform screen coords into 320x240 coords
-        Vector3 mousePos = Input.mousePosition;
-        Vector2 screen = new Vector2(Screen.width, Screen.height);
-        float aspectRatio = screen.x / screen.y;
-        if (aspectRatio > 4.0f / 3.0f) // wider resolution
-        {
-            float ratio = screen.y / 240.0f;
-            float edge = 160.0f * ratio;
-            float offset = screen.x / 2.0f - edge;
-            mousePos.x = Math.Clamp(mousePos.x, screen.x * 0.5f - edge, screen.x * 0.5f + edge) - offset;
-
-            mousePos.x /= ratio;
-            mousePos.y /= ratio;
-        }
-        else // taller resolution (why???)
-        {
-            float ratio = screen.x / 320.0f;
-            float edge = 120.0f * ratio;
-            float offset = screen.y / 2.0f - edge;
-
-            mousePos.y = Math.Clamp(mousePos.y, screen.y * 0.5f - edge, screen.y * 0.5f + edge) - offset;
-
-            mousePos.x /= ratio;
-            mousePos.y /= ratio;
-        }
-
-        return new Vector2(mousePos.x, mousePos.y);
-    }
-
-    void MiniGame()
+    void EnterMiniGame()
     {
 
         player.transform.gameObject.SetActive(false);
