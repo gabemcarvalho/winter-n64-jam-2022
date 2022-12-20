@@ -26,7 +26,7 @@ public class MiniGameScript : MonoBehaviour
     bool startMinigame = false;
     Vector3 playerOldPosition;
     Vector3 cameraOldPosition;
-    private float rotationSpeed = 10f;
+    private float rotationSpeed = 30f;
     bool aiming;
 
 
@@ -47,41 +47,20 @@ public class MiniGameScript : MonoBehaviour
     {
         if (other.gameObject.tag == "Player")
         {
-            this.gameObject.layer = 13;
+            
             startMinigame = true;
-            player.transform.gameObject.SetActive(false);
-            uiElements.SetActive(true);
-            // storing old position of camera & player
-            cameraOldPosition = mainCamera.transform.position;
-            playerOldPosition = player.transform.position;
-
-            //miniGameCamera.freeForm.enabled = false;
-            miniGameCamera.lockOnTarget.followTarget = target;
-
-            Vector3 targetPos = target.transform.position;
-            Vector3 lineOfSight = new Vector3(targetPos.x - 1, 0, targetPos.z - 1).normalized;
-
-            miniGameCamera.cameraOffsetTarget = new Vector3(1.0f, 0.7f, 0.3f * lineOfSight.magnitude);
-
-
-            // masking undesirable layers during the play 
-            LayerCullingHide(mainCamera, 6);
-            hide(mainCamera, "Ground");
-            LayerCullingHide(mainCamera, 12);
-            hide(mainCamera, "Tree");
-            LayerCullingHide(mainCamera, 8);
-            hide(mainCamera, "NPC");
-
-
-            Debug.Log("trigger enter");
+            
+           
         }
     }
 
     // Update is called once per frame
     void Update()
     {
+        
         if (startMinigame)
         {
+            MiniGame();
             if (Input.GetKeyDown(KeyCode.LeftShift))
             {
                 UIActions.EventUnlockCursor?.Invoke();
@@ -92,31 +71,30 @@ public class MiniGameScript : MonoBehaviour
                 UIActions.EventLockCursor?.Invoke();
                 aiming = false;
             }
-            if (Input.GetKeyDown(KeyCode.LeftArrow))
+            if (Input.GetKey(KeyCode.LeftArrow))
             {
-                tree.transform.Rotate(0, 0, -rotationSpeed * Time.deltaTime);
+                tree.transform.Rotate(0, -rotationSpeed * Time.deltaTime, 0);
+            }
+            if (aiming && Input.GetMouseButtonDown(0))
+            {
+
+                playingCharacter.shootSnow();
+
+            }
+
+            if (Input.GetKeyDown(KeyCode.C))
+            {
+
+                startMinigame = false;
+             
+
             }
         }
-        if (startMinigame && aiming && Input.GetMouseButtonDown(0))
+        else
         {
-
-            playingCharacter.shootSnow();
-
+            ExitMiniGame();
         }
-
-        if (Input.GetKeyDown(KeyCode.C) && startMinigame)
-        {
-            this.gameObject.layer = 12;
-            startMinigame = false;
-            miniGameCamera.lockOnTarget.followTarget = null;
-            player.transform.gameObject.SetActive(true);
-            uiElements.SetActive(false);
-            player.transform.position = playerOldPosition - new Vector3(7, 0, 3);
-
-
-            LayerCullingShow(mainCamera, 6);
-            show(mainCamera, "Ground");
-        }
+       
 
     }
     void LayerCullingShow(Camera cam, int layerMask)
@@ -137,21 +115,7 @@ public class MiniGameScript : MonoBehaviour
         LayerCullingHide(cam, 1 << LayerMask.NameToLayer(layer));
     }
 
-    //void MiniGame()
-    //{
-    //    if (startMinigame)
-    //    {
-    //        LayerCullingHide(camera, 6);
-    //        hide(camera, "Ground");
-    //        control.DisableCamera();
-    //    }
-    //    if(!startMinigame)
-    //    {
-    //        LayerCullingShow(camera, 6);
-    //        show(camera, "Ground");
-    //        control.EnableCamera();
-    //    }
-    //}
+  
 
 
 
@@ -184,6 +148,53 @@ public class MiniGameScript : MonoBehaviour
         }
 
         return new Vector2(mousePos.x, mousePos.y);
+    }
+
+    void MiniGame()
+    {
+
+        player.transform.gameObject.SetActive(false);
+        uiElements.SetActive(true);
+        // storing old position of camera & player
+        cameraOldPosition = mainCamera.transform.position;
+        playerOldPosition = player.transform.position;
+
+        //miniGameCamera.freeForm.enabled = false;
+        miniGameCamera.lockOnTarget.followTarget = target;
+
+        Vector3 targetPos = target.transform.position;
+        Vector3 lineOfSight = new Vector3(targetPos.x - 10, 0, targetPos.z - 10).normalized;
+
+        miniGameCamera.cameraOffsetTarget = new Vector3(1.0f, 0.7f, 0.3f * lineOfSight.magnitude);
+
+
+        // masking undesirable layers during the play 
+        LayerCullingHide(mainCamera, 6);
+        hide(mainCamera, "Ground");
+        LayerCullingHide(mainCamera, 12);
+        hide(mainCamera, "Tree");
+        LayerCullingHide(mainCamera, 8);
+        hide(mainCamera, "NPC");
+        LayerCullingHide(mainCamera, 4);
+        hide(mainCamera, "Water");
+
+
+        Debug.Log("trigger enter");
+
+    }
+    void ExitMiniGame() {
+        miniGameCamera.lockOnTarget.followTarget = null;
+        player.transform.gameObject.SetActive(true);
+        player.transform.position = playerOldPosition - new Vector3(7, 0, 3);
+        LayerCullingShow(mainCamera, 6);
+        show(mainCamera, "Ground");
+        LayerCullingShow(mainCamera, 12);
+        show(mainCamera, "Tree");
+        LayerCullingShow(mainCamera, 8);
+        show(mainCamera, "NPC");
+        LayerCullingShow(mainCamera, 4);
+        show(mainCamera, "Water");
+        uiElements.SetActive(true);
     }
 
 }
