@@ -235,17 +235,17 @@ namespace ThirdPersonCamera
 
             mouseCursorHelper.Update();
 #else
-            if (lockMouseCursor)
-            {
-                if (inputFreeLook || cameraMode == CameraMode.Always)
-                {
-                    HideCursor();
-                }
-                else
-                {
-                    ShowCursor();
-                }
-            }
+            //if (lockMouseCursor)
+            //{
+            //    if (inputFreeLook || cameraMode == CameraMode.Always)
+            //    {
+            //        HideCursor();
+            //    }
+            //    else
+            //    {
+            //        ShowCursor();
+            //    }
+            //}
 #endif            
             // sample inputs for changing character direction
             if (forceDirectionFeature && mouseInputForceDirection.Count > 0)

@@ -125,15 +125,7 @@ public class PlayerController : MonoBehaviour
 
         if (aimMode && Input.GetMouseButtonDown(0))
         {
-            Vector2 mousePos = GetGameCameraMousePosition();
-
-            Vector3 aim = camera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, 5.0f));
-            Vector3 mouseDirection = aim - camera.transform.position;
-
-            GameObject snowball = Instantiate(decorationProjectiles[activeDecorationIndex], bucketTransform.position, Quaternion.identity);
-            snowball.transform.LookAt(aim);
-            Rigidbody b = snowball.GetComponent<Rigidbody>();
-            b.AddForce(mouseDirection.normalized * 500f);
+            shootSnow();
         }
 
         if (Input.GetKeyDown(KeyCode.E))
@@ -393,5 +385,17 @@ public class PlayerController : MonoBehaviour
         characterController.enabled = true;
 
         verticalSpeed = 0;
+    }
+    public void shootSnow()
+    {
+        Vector2 mousePos = GetGameCameraMousePosition();
+
+        Vector3 aim = camera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, 5.0f));
+        Vector3 mouseDirection = aim - camera.transform.position;
+
+        GameObject snowball = Instantiate(decorationProjectiles[activeDecorationIndex], bucketTransform.position, Quaternion.identity);
+        snowball.transform.LookAt(aim);
+        Rigidbody b = snowball.GetComponent<Rigidbody>();
+        b.AddForce(mouseDirection.normalized * 500f);
     }
 }

@@ -9,12 +9,12 @@ public class CameraController : MonoBehaviour
     [SerializeField] float xSensitivity = 1.5f;
     [SerializeField] float ySensitivity = 1.0f;
 
-    private ThirdPersonCamera.CameraController cameraController;
-    private ThirdPersonCamera.FreeForm freeForm;
-    private ThirdPersonCamera.CameraInputSampling_FreeForm cameraInput;
-    private ThirdPersonCamera.LockOnTarget lockOnTarget;
+    public ThirdPersonCamera.CameraController cameraController;
+    public ThirdPersonCamera.FreeForm freeForm;
+    public ThirdPersonCamera.CameraInputSampling_FreeForm cameraInput;
+    public ThirdPersonCamera.LockOnTarget lockOnTarget;
 
-    private Vector3 cameraOffsetTarget;
+    public Vector3 cameraOffsetTarget;
 
     // Start is called before the first frame update
     void Awake()
