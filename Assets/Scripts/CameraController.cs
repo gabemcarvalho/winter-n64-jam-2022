@@ -33,6 +33,7 @@ public class CameraController : MonoBehaviour
         UIActions.EventLockCursor += EnableCamera;
         UIActions.EventEnterTextboxCamera += EnterTextboxCamera;
         UIActions.EventExitTextboxCamera += ExitTextboxCamera;
+        UIActions.EventStartGame += EnableMainMenuCamera;
 
         cameraOffsetTarget = normalCameraOffset;
     }
@@ -45,12 +46,12 @@ public class CameraController : MonoBehaviour
         UIActions.EventLockCursor -= EnableCamera;
         UIActions.EventEnterTextboxCamera -= EnterTextboxCamera;
         UIActions.EventExitTextboxCamera -= ExitTextboxCamera;
+        UIActions.EventStartGame -= EnableMainMenuCamera;
     }
 
     private void Update()
     {
         cameraController.offsetVector = Vector3.MoveTowards(cameraController.offsetVector, cameraOffsetTarget, Time.deltaTime * targetChangeLerp);
-        //cameraController.offsetVector = cameraOffsetTarget;
     }
 
     void DisableCamera()
@@ -58,7 +59,6 @@ public class CameraController : MonoBehaviour
         cameraInput.enabled = false;
         freeForm.stationaryModeHorizontal = ThirdPersonCamera.StationaryModeType.Fixed;
         freeForm.stationaryModeVertical = ThirdPersonCamera.StationaryModeType.Fixed;
-        //Time.timeScale = 0;
     }
 
     void EnableCamera()
@@ -66,7 +66,6 @@ public class CameraController : MonoBehaviour
         cameraInput.enabled = true;
         freeForm.stationaryModeHorizontal = ThirdPersonCamera.StationaryModeType.Free;
         freeForm.stationaryModeVertical = ThirdPersonCamera.StationaryModeType.Free;
-        //Time.timeScale = 1.0f;
     }
 
     void EnterTextboxCamera(ThirdPersonCamera.Targetable target)
@@ -87,5 +86,10 @@ public class CameraController : MonoBehaviour
         lockOnTarget.followTarget = null;
         cameraController.pivotRotation = Quaternion.identity;
         cameraOffsetTarget = normalCameraOffset;
+    }
+
+    void EnableMainMenuCamera()
+    {
+        DisableCamera();
     }
 }

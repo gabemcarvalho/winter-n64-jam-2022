@@ -89,16 +89,15 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey("escape"))
-        {
-            Application.Quit();
-        }
-
-        if (!canMove)
+        if (!canMove || Time.timeScale == 0)
         {
             return;
         }
 
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            UIActions.EventPauseGame?.Invoke();
+        }
 
         if (interactableFocus != null)
         {
@@ -320,7 +319,7 @@ public class PlayerController : MonoBehaviour
         UIActions.EventExitTextboxCamera?.Invoke(true);
     }
 
-    static Vector2 GetGameCameraMousePosition()
+    public static Vector2 GetGameCameraMousePosition()
     {
         // transform screen coords into 320x240 coords
         Vector3 mousePos = Input.mousePosition;
