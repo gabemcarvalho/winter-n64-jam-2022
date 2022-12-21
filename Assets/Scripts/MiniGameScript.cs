@@ -32,35 +32,50 @@ public class MiniGameScript : MonoBehaviour
 
     [SerializeField] public string snowballPrefabResource = "Decorations/Snowball";
     public GameObject miniSnowballPrefab;
+    private List<GameObject> decorationtiles;
+    private int DecorationIndex;
 
 
     private void Start()
     {
         miniGameCamera = mainCamera.gameObject.GetComponent<CameraController>();
-        //playingCharacter = player.gameObject.GetComponent<PlayerController>();
+        playingCharacter = player.gameObject.GetComponent<PlayerController>();
+
         miniSnowballPrefab = Resources.Load(snowballPrefabResource) as GameObject;
         //UIActions.EventActiveDecorationChanged?.Invoke(playingCharacter.availableDecorations[playingCharacter.activeDecorationIndex]);
+        DecorationIndex = 0;
+        decorationtiles = new List<GameObject>();
+        foreach (DecorationInfo info in playingCharacter.availableDecorations)
+        {
+            GameObject decorationPrefab = Resources.Load(info.projectileResource) as GameObject;
+            decorationtiles.Add(decorationPrefab);
+        }
+        UIActions.EventActiveDecorationChanged?.Invoke(playingCharacter.availableDecorations[DecorationIndex]);
 
 
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Player")
+        if (other.gameObject.tag == "Player" && !startMinigame)
         {
-            
+
             startMinigame = true;
-            
-           
+            EnterMiniGame();
+
+            Debug.Log(startMinigame);
+
         }
     }
+
 
     // Update is called once per frame
     void Update()
     {
-        
         if (startMinigame)
         {
-            EnterMiniGame();
+
+
+
             if (Input.GetKeyDown(KeyCode.LeftShift))
             {
                 UIActions.EventUnlockCursor?.Invoke();
@@ -75,28 +90,41 @@ public class MiniGameScript : MonoBehaviour
             {
                 tree.transform.Rotate(0, -rotationSpeed * Time.deltaTime, 0);
             }
-            if (aiming && Input.GetMouseButtonDown(0))
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                DecorationIndex = (DecorationIndex + 1) % playingCharacter.availableDecorations.Count;
+                UIActions.EventActiveDecorationChanged?.Invoke(playingCharacter.availableDecorations[DecorationIndex]);
+            }
+            if (startMinigame && aiming && Input.GetMouseButtonDown(0))
             {
 
-                playingCharacter.shootSnow();
+                shootSnow();
 
             }
 
             if (Input.GetKeyDown(KeyCode.C))
             {
-
+                //this.gameObject.layer = 12;
+                ExitMiniGame();
                 startMinigame = false;
-             
+
 
             }
         }
-        else
-        {
-            ExitMiniGame();
-        }
-       
+        //else if (!startMinigame){
+        //    ExitMiniGame();
+        //    Debug.Log(player.transform.position);
+        //    startMinigame = false;
+        //    Debug.Log(startMinigame);
+        //    Debug.Log(player.transform.position);
+
+        //}
+
 
     }
+
+
+
     void LayerCullingShow(Camera cam, int layerMask)
     {
         cam.cullingMask |= layerMask;
@@ -115,21 +143,27 @@ public class MiniGameScript : MonoBehaviour
         LayerCullingHide(cam, 1 << LayerMask.NameToLayer(layer));
     }
 
-  
+
 
 
 
     void EnterMiniGame()
     {
 
-        player.transform.gameObject.SetActive(false);
+        //this.GetComponent<BoxCollider>().enabled = false;
         uiElements.SetActive(true);
         // storing old position of camera & player
         cameraOldPosition = mainCamera.transform.position;
         playerOldPosition = player.transform.position;
+        player.transform.gameObject.SetActive(false);
+        //gun.GetComponent<Bucket>().followTransform = null ;
 
         //miniGameCamera.freeForm.enabled = false;
-        miniGameCamera.lockOnTarget.followTarget = target;
+        //miniGameCamera.lockOnTarget.followTarget = target;
+        mainCamera.GetComponent<CameraController>().enabled = false;
+        
+        mainCamera.transform.LookAt(tree.transform.position);
+        playingCharacter.bucketTransform.position = mainCamera.transform.position + new Vector3(0, 0, 0);
 
         Vector3 targetPos = target.transform.position;
         Vector3 lineOfSight = new Vector3(targetPos.x - 10, 0, targetPos.z - 10).normalized;
@@ -140,8 +174,8 @@ public class MiniGameScript : MonoBehaviour
         // masking undesirable layers during the play 
         LayerCullingHide(mainCamera, 6);
         hide(mainCamera, "Ground");
-        LayerCullingHide(mainCamera, 12);
-        hide(mainCamera, "Tree");
+        //LayerCullingHide(mainCamera, 12);
+        //hide(mainCamera, "Tree");
         LayerCullingHide(mainCamera, 8);
         hide(mainCamera, "NPC");
         LayerCullingHide(mainCamera, 4);
@@ -151,20 +185,67 @@ public class MiniGameScript : MonoBehaviour
         Debug.Log("trigger enter");
 
     }
-    void ExitMiniGame() {
-        miniGameCamera.lockOnTarget.followTarget = null;
+    void ExitMiniGame()
+    {
         player.transform.gameObject.SetActive(true);
-        player.transform.position = playerOldPosition - new Vector3(7, 0, 3);
+        //miniGameCamera.lockOnTarget.followTarget = null;
+        player.transform.position = playerOldPosition - new Vector3(0, 0, 1);
+        this.GetComponent<BoxCollider>().enabled = true;
+        mainCamera.GetComponent<CameraController>().enabled = true ;
+        //gun.GetComponent<Bucket>().followTransform = player.transform;
         LayerCullingShow(mainCamera, 6);
         show(mainCamera, "Ground");
-        LayerCullingShow(mainCamera, 12);
-        show(mainCamera, "Tree");
+        //LayerCullingShow(mainCamera, 12);
+        //show(mainCamera, "Tree");
         LayerCullingShow(mainCamera, 8);
         show(mainCamera, "NPC");
         LayerCullingShow(mainCamera, 4);
         show(mainCamera, "Water");
-        uiElements.SetActive(true);
-    }
+        uiElements.SetActive(false);
 
+
+    }
+    public void shootSnow()
+    {
+        Vector2 mousePos = GetGameCameraMousePosition();
+
+        Vector3 aim = mainCamera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, 5.0f));
+        Vector3 mouseDirection = aim - mainCamera.transform.position;
+
+        GameObject snowball = Instantiate(decorationtiles[DecorationIndex], playingCharacter.bucketTransform.position, Quaternion.identity);
+        snowball.transform.LookAt(aim);
+        Rigidbody b = snowball.GetComponent<Rigidbody>();
+        b.AddForce(mouseDirection.normalized * 500f);
+    }
+    static Vector2 GetGameCameraMousePosition()
+    {
+        // transform screen coords into 320x240 coords
+        Vector3 mousePos = Input.mousePosition;
+        Vector2 screen = new Vector2(Screen.width, Screen.height);
+        float aspectRatio = screen.x / screen.y;
+        if (aspectRatio > 4.0f / 3.0f) // wider resolution
+        {
+            float ratio = screen.y / 240.0f;
+            float edge = 160.0f * ratio;
+            float offset = screen.x / 2.0f - edge;
+            mousePos.x = Math.Clamp(mousePos.x, screen.x * 0.5f - edge, screen.x * 0.5f + edge) - offset;
+
+            mousePos.x /= ratio;
+            mousePos.y /= ratio;
+        }
+        else // taller resolution (why???)
+        {
+            float ratio = screen.x / 320.0f;
+            float edge = 120.0f * ratio;
+            float offset = screen.y / 2.0f - edge;
+
+            mousePos.y = Math.Clamp(mousePos.y, screen.y * 0.5f - edge, screen.y * 0.5f + edge) - offset;
+
+            mousePos.x /= ratio;
+            mousePos.y /= ratio;
+        }
+
+        return new Vector2(mousePos.x, mousePos.y);
+    }
 }
 

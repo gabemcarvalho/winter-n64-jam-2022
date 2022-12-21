@@ -49,7 +49,7 @@ public class PlayerController : MonoBehaviour
 
     private float mudTime;
 
-    [SerializeField] Transform bucketTransform;
+    [SerializeField] public Transform bucketTransform;
 
     // Start is called before the first frame update
     void Start()
