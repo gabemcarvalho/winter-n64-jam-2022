@@ -155,6 +155,7 @@ public class MiniGameScript : MonoBehaviour
         // storing old position of camera & player
         cameraOldPosition = mainCamera.transform.position;
         playerOldPosition = player.transform.position;
+        player.transform.position = mainCamera.transform.position + new Vector3(0,0,1);
         player.transform.gameObject.SetActive(false);
         //gun.GetComponent<Bucket>().followTransform = null ;
 
@@ -163,7 +164,7 @@ public class MiniGameScript : MonoBehaviour
         mainCamera.GetComponent<CameraController>().enabled = false;
         
         mainCamera.transform.LookAt(tree.transform.position);
-        playingCharacter.bucketTransform.position = mainCamera.transform.position + new Vector3(0, 0, 0);
+        //playingCharacter.bucketTransform.position = mainCamera.transform.position + new Vector3(0, 0, 0);
 
         Vector3 targetPos = target.transform.position;
         Vector3 lineOfSight = new Vector3(targetPos.x - 10, 0, targetPos.z - 10).normalized;
