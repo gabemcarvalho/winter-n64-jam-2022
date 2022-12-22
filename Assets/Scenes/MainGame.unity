@@ -1024,7 +1024,7 @@ GameObject:
   m_Component:
   - component: {fileID: 269171529}
   - component: {fileID: 269171528}
-  m_Layer: 6
+  m_Layer: 14
   m_Name: tree (12)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1753,7 +1753,7 @@ GameObject:
   m_Component:
   - component: {fileID: 510645592}
   - component: {fileID: 510645591}
-  m_Layer: 6
+  m_Layer: 14
   m_Name: tree (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1807,7 +1807,7 @@ GameObject:
   - component: {fileID: 565868777}
   m_Layer: 7
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1903,7 +1903,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 565868776}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -11.77, y: 6.3499994, z: -14.969999}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4007,7 +4007,7 @@ GameObject:
   m_Component:
   - component: {fileID: 922614499}
   - component: {fileID: 922614498}
-  m_Layer: 6
+  m_Layer: 14
   m_Name: tree (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4128,6 +4128,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 1f551074fccc74346a0ba7ee01b0b045, type: 3}
       propertyPath: m_Layer
       value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 1f551074fccc74346a0ba7ee01b0b045, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 1f551074fccc74346a0ba7ee01b0b045, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -4730,7 +4734,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1018158166}
   - component: {fileID: 1018158165}
-  m_Layer: 6
+  m_Layer: 14
   m_Name: tree (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5011,7 +5015,12 @@ GameObject:
   m_Component:
   - component: {fileID: 1028397572}
   - component: {fileID: 1028397573}
+<<<<<<< Updated upstream
   m_Layer: 6
+=======
+  - component: {fileID: 1028397574}
+  m_Layer: 14
+>>>>>>> Stashed changes
   m_Name: tree
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5113,11 +5122,84 @@ PrefabInstance:
       value: waterfalls
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 2f849e4ba36f8e2419da8597e27cdb8b, type: 3}
+      propertyPath: m_Layer
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2f849e4ba36f8e2419da8597e27cdb8b, type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2f849e4ba36f8e2419da8597e27cdb8b, type: 3}
+<<<<<<< Updated upstream
+=======
+--- !u!1 &1054476636
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1054476637}
+  - component: {fileID: 1054476639}
+  - component: {fileID: 1054476638}
+  m_Layer: 6
+  m_Name: MinigameTrigger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1054476637
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1054476636}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1028397572}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1054476638
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1054476636}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 177d06b91f78942acb93f6b57aaf68c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mainCamera: {fileID: 963194227}
+  target: {fileID: 1028397574}
+  player: {fileID: 565868776}
+  gun: {fileID: 0}
+  tree: {fileID: 1028397571}
+  uiElements: {fileID: 1839531866}
+  snowballPrefabResource: Decorations/Snowball
+  miniSnowballPrefab: {fileID: 0}
+--- !u!65 &1054476639
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1054476636}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2.4057493, y: 0.6259644, z: 2.1208801}
+  m_Center: {x: 0.011909008, y: 0.1870178, z: 0.1048584}
+>>>>>>> Stashed changes
 --- !u!1 &1085728017
 GameObject:
   m_ObjectHideFlags: 0
@@ -5128,7 +5210,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1085728019}
   - component: {fileID: 1085728018}
-  m_Layer: 6
+  m_Layer: 14
   m_Name: tree (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6294,6 +6376,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 1f551074fccc74346a0ba7ee01b0b045, type: 3}
       propertyPath: m_Layer
       value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 1f551074fccc74346a0ba7ee01b0b045, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 1f551074fccc74346a0ba7ee01b0b045, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -9922,7 +10008,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2040420788}
   - component: {fileID: 2040420787}
-  m_Layer: 6
+  m_Layer: 14
   m_Name: tree (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
