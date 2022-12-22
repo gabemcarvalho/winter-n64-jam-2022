@@ -13,6 +13,29 @@ MonoBehaviour:
   m_Name: dlgTest
   m_EditorClassIdentifier: 
   characterName: Cubeworth
+  cameraMode: 0
   dialogue:
-  - Welcome to the 2022 <b><#42e6f5>Winter N64 Style Graphics Jam</color></b>!
-  - Good luck!
+  - text: Welcome to the 2022 <b><#42e6f5>Winter N64 Style Graphics Jam</color></b>!
+    characterName: Cubeworth
+    showTextbox: 1
+    moveCamera: 0
+    cameraRotation: {x: 0, y: 0, z: 0}
+    cameraStartPosition: {x: 0, y: 0, z: 0}
+    cameraEndPosition: {x: 0, y: 0, z: 0}
+    duration: 3
+  - text: 
+    characterName: 
+    showTextbox: 0
+    moveCamera: 0
+    cameraRotation: {x: 0, y: 0, z: 0}
+    cameraStartPosition: {x: 0, y: 0, z: 0}
+    cameraEndPosition: {x: 0, y: 0, z: 0}
+    duration: 2
+  - text: Good luck!
+    characterName: Cubeworth
+    showTextbox: 1
+    moveCamera: 0
+    cameraRotation: {x: 0, y: 0, z: 0}
+    cameraStartPosition: {x: 0, y: 0, z: 0}
+    cameraEndPosition: {x: 0, y: 0, z: 0}
+    duration: 3

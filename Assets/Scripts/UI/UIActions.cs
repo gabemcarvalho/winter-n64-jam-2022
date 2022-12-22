@@ -19,6 +19,8 @@ public class UIActions : MonoBehaviour
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject pausePanel;
 
+    [SerializeField] private DialogueObject introDialog;
+
     private GameObject activePanel;
     private GameObject preSettingsPanel;
 
@@ -31,7 +33,7 @@ public class UIActions : MonoBehaviour
 
     private void Start()
     {
-        //EventStartGame?.Invoke();
+        EventStartGame?.Invoke();
     }
 
     void OnDestroy()
@@ -71,6 +73,7 @@ public class UIActions : MonoBehaviour
 
     public void ShowPauseMenu()
     {
+        activePanel.SetActive(false);
         pausePanel.SetActive(true);
         activePanel = pausePanel;
         Time.timeScale = 0.0f;
@@ -79,7 +82,8 @@ public class UIActions : MonoBehaviour
     public void ClosePauseMenu()
     {
         pausePanel.SetActive(false);
-        activePanel = null;
+        activePanel = gamePanel;
+        activePanel.SetActive(true);
         Time.timeScale = 1.0f;
     }
 
@@ -90,8 +94,9 @@ public class UIActions : MonoBehaviour
 
     public void StartGame()
     {
+        PlayerController.EventSetCanMove?.Invoke(false);
+
         TransitionPanel.EventStartFadeInTransition?.Invoke(0.8f);
-        Time.timeScale = 0.0f;
 
         activePanel = mainMenuPanel;
         mainMenuPanel.SetActive(true);
@@ -99,5 +104,22 @@ public class UIActions : MonoBehaviour
         gamePanel.SetActive(false);
         settingsPanel.SetActive(false);
         pausePanel.SetActive(false);
+
+        CameraController.EventEnableTitleCamera?.Invoke();
+    }
+
+    public void OnPlayButtonPressed()
+    {
+        TransitionPanel.EventTransitionEnded += PlayIntroDialog;
+        TransitionPanel.EventStartTransition?.Invoke(0.8f);
+    }
+
+    public void PlayIntroDialog()
+    {
+        TransitionPanel.EventTransitionEnded -= PlayIntroDialog;
+
+        CameraController.EventDisableTitleCamera?.Invoke();
+        mainMenuPanel.SetActive(false);
+        DialogueUI.EventShowDialogue.Invoke(introDialog);
     }
 }

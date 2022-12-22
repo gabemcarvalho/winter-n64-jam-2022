@@ -10,24 +10,25 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4fbf94e38b20f50479d2c866bfab803d, type: 3}
-  m_Name: dlgRefrigerator
+  m_Name: dlgIntroCutscene
   m_EditorClassIdentifier: 
-  characterName: Cubeworth
-  cameraMode: 0
+  cameraMode: 1
   dialogue:
-  - text: Is your <b><#42e6f5>refrigerator</color></b> running?
-    characterName: Cubeworth
+  - text: It's almost time for the winter festival!
+    characterName: Mr. Bucket
     showTextbox: 1
-    moveCamera: 0
+    moveCamera: 1
+    cameraRotation: {x: 10, y: -180, z: 0}
+    cameraStartPosition: {x: -17.8, y: 7.1, z: -15.35}
+    cameraEndPosition: {x: -18.3, y: 7.1, z: -15.35}
+    duration: 6
+    specialEvent: 
+  - text: 
+    characterName: 
+    showTextbox: 0
+    moveCamera: 1
     cameraRotation: {x: 0, y: 0, z: 0}
     cameraStartPosition: {x: 0, y: 0, z: 0}
     cameraEndPosition: {x: 0, y: 0, z: 0}
-    duration: 3
-  - text: You should go catch it.
-    characterName: Cubeworth
-    showTextbox: 1
-    moveCamera: 0
-    cameraRotation: {x: 0, y: 0, z: 0}
-    cameraStartPosition: {x: 0, y: 0, z: 0}
-    cameraEndPosition: {x: 0, y: 0, z: 0}
-    duration: 3
+    duration: 0
+    specialEvent: StartGame

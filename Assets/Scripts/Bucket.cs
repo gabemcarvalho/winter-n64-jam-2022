@@ -18,7 +18,7 @@ public class Bucket : MonoBehaviour
 
     private int playerLayer;
 
-    [SerializeField] private Transform followTransform;
+    [SerializeField] private PlayerController player;
 
     private void Awake()
     {
@@ -29,12 +29,14 @@ public class Bucket : MonoBehaviour
 
     void Update()
     {
+        if (!player.canMove) return;
+
         switch (state)
         {
             case State.OnPlayer:
-                Vector3 targetPosition = followTransform.position + Vector3.up * hoverHeight;
-                targetPosition -= followTransform.forward * distanceBehind;
-                targetPosition += Vector3.Cross(Vector3.up, followTransform.forward) * distanceBeside;
+                Vector3 targetPosition = player.transform.position + Vector3.up * hoverHeight;
+                targetPosition -= player.transform.forward * distanceBehind;
+                targetPosition += Vector3.Cross(Vector3.up, player.transform.forward) * distanceBeside;
                 transform.position = Vector3.Lerp(transform.position, targetPosition, lerpAmount * Time.deltaTime);
                 break;
         }

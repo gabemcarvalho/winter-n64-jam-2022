@@ -33,30 +33,78 @@ public class DialogueUI : MonoBehaviour
         StartCoroutine(AdvanceDialogue(dialogueObject));
     }
 
+    // this now doubles as a cutscene system
     private IEnumerator AdvanceDialogue(DialogueObject dialogueObject)
     {
         dialogueBox.SetActive(true);
-        tmpNamebox.text = dialogueObject.CharacterName;
+        tmpNamebox.text = string.Empty;
         tmpTextbox.text = string.Empty;
 
-        animator.Play("animEntry");
-        yield return 0; // wait for next frame
-        //yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length); // ignore these for this game
-        animator.Play("animIdle");
-
-        foreach (string dialogue in dialogueObject.Dialogue)
+        if (dialogueObject.Mode == DialogueObject.CameraMode.Cutscene)
         {
-            yield return revealText.Run(dialogue, tmpTextbox);
-            yield return new WaitUntil(() => Input.GetButtonDown("Jump"));
+            CameraController.EventEnableCutsceneCamera?.Invoke();
+        }
+
+        bool textboxVisible = false;
+        foreach (TextBlock textBlock in dialogueObject.Dialogue)
+        {
+            if (!string.IsNullOrEmpty(textBlock.specialEvent))
+            {
+                if (textBlock.specialEvent == "StartGame")
+                {
+                    // play music
+                }
+            }
+
+            if (dialogueObject.Mode == DialogueObject.CameraMode.Cutscene && textBlock.moveCamera)
+            {
+                CutsceneCamera.EventChangeCutsceneCamera?.Invoke(textBlock.cameraRotation, textBlock.cameraStartPosition, textBlock.cameraEndPosition, textBlock.duration);
+            }
+
+            if (textBlock.showTextbox)
+            {
+                if (!textboxVisible)
+                {
+                    animator.Play("animEntry"); // assume instant animation for this game
+                    yield return 0; // wait for next frame
+                    animator.Play("animIdle");
+                    textboxVisible = true;
+                }
+
+                tmpNamebox.text = textBlock.characterName;
+                yield return revealText.Run(textBlock.text, tmpTextbox);
+                yield return new WaitUntil(() => Input.GetButtonDown("Jump"));
+
+                continue;
+            }
+            else
+            {
+                if (textboxVisible)
+                {
+                    animator.Play("animExit");
+                    yield return 0; // wait for next frame
+                    textboxVisible = false;
+                    tmpNamebox.text = string.Empty;
+                    tmpTextbox.text = string.Empty;
+                }
+
+                yield return new WaitForSeconds(textBlock.duration);
+                continue;
+            }
         }
         
         tmpTextbox.text = string.Empty;
 
         animator.Play("animExit");
         yield return 0; // wait for next frame
-        //yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
         
         tmpNamebox.text = string.Empty;
+
+        if (dialogueObject.Mode == DialogueObject.CameraMode.Cutscene)
+        {
+            CameraController.EventDisableCutsceneCamera?.Invoke();
+            UIActions.EventResumeGame?.Invoke();
+        }
 
         CloseDialogueBox();
     }

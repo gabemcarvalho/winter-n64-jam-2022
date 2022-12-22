@@ -3,9 +3,15 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Dialogue/DialogueObject")]
 public class DialogueObject : ScriptableObject
 {
-    [SerializeField] private string characterName;
-    [SerializeField] [TextArea(4, 10)] private string[] dialogue;
+    public enum CameraMode
+    {
+        Focus,
+        Cutscene
+    }
 
-    public string[] Dialogue => dialogue;
-    public string CharacterName => characterName;
+    [SerializeField] private CameraMode cameraMode = CameraMode.Focus;
+    [SerializeField] private TextBlock[] dialogue;
+
+    public TextBlock[] Dialogue => dialogue;
+    public CameraMode Mode => cameraMode;
 }

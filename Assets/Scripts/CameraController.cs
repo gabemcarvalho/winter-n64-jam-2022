@@ -1,9 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class CameraController : MonoBehaviour
 {
+    public static Action EventEnableCutsceneCamera;
+    public static Action EventDisableCutsceneCamera;
+    public static Action EventEnableTitleCamera;
+    public static Action EventDisableTitleCamera;
+
     [SerializeField] Vector3 normalCameraOffset = new Vector3(0, 0.5f, 0);
     [SerializeField] float targetChangeLerp = 0.1f;
     [SerializeField] float xSensitivity = 1.5f;
@@ -14,6 +18,9 @@ public class CameraController : MonoBehaviour
     public ThirdPersonCamera.CameraInputSampling_FreeForm cameraInput;
     public ThirdPersonCamera.LockOnTarget lockOnTarget;
 
+    private CutsceneCamera cutsceneCamera;
+    private TitleScreenCamera titleScreenCamera;
+
     public Vector3 cameraOffsetTarget;
 
     // Start is called before the first frame update
@@ -23,6 +30,8 @@ public class CameraController : MonoBehaviour
         freeForm = GetComponent<ThirdPersonCamera.FreeForm>();
         cameraInput = GetComponent<ThirdPersonCamera.CameraInputSampling_FreeForm>();
         lockOnTarget = GetComponent<ThirdPersonCamera.LockOnTarget>();
+        cutsceneCamera = GetComponent<CutsceneCamera>();
+        titleScreenCamera = GetComponent<TitleScreenCamera>();
 
         cameraInput.mouseSensitivity.x = xSensitivity;
         cameraInput.mouseSensitivity.y = ySensitivity;
@@ -36,6 +45,11 @@ public class CameraController : MonoBehaviour
         UIActions.EventStartGame += EnableMainMenuCamera;
 
         cameraOffsetTarget = normalCameraOffset;
+
+        EventEnableCutsceneCamera += EnableCutsceneCamera;
+        EventDisableCutsceneCamera += DisableCutsceneCamera;
+        EventEnableTitleCamera += EnableTitleCamera;
+        EventDisableTitleCamera += DisableTitleCamera;
     }
 
     void OnDestroy()
@@ -47,6 +61,11 @@ public class CameraController : MonoBehaviour
         UIActions.EventEnterTextboxCamera -= EnterTextboxCamera;
         UIActions.EventExitTextboxCamera -= ExitTextboxCamera;
         UIActions.EventStartGame -= EnableMainMenuCamera;
+
+        EventEnableCutsceneCamera -= EnableCutsceneCamera;
+        EventDisableCutsceneCamera -= DisableCutsceneCamera;
+        EventEnableTitleCamera -= EnableTitleCamera;
+        EventDisableTitleCamera -= DisableTitleCamera;
     }
 
     private void Update()
@@ -91,5 +110,30 @@ public class CameraController : MonoBehaviour
     void EnableMainMenuCamera()
     {
         DisableCamera();
+    }
+
+    // This probably won't interfere with other camera events for this game
+    void EnableCutsceneCamera()
+    {
+        cameraController.enabled = false;
+        cutsceneCamera.enabled = true;
+    }
+
+    void DisableCutsceneCamera()
+    {
+        cameraController.enabled = true;
+        cutsceneCamera.enabled = false;
+    }
+
+    void EnableTitleCamera()
+    {
+        cameraController.enabled = false;
+        titleScreenCamera.enabled = true;
+    }
+
+    void DisableTitleCamera()
+    {
+        cameraController.enabled = true;
+        titleScreenCamera.enabled = false;
     }
 }

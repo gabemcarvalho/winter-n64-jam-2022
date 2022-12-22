@@ -6,6 +6,8 @@ using UnityEngine;
 [RequireComponent(typeof(CharacterController), typeof(Animator))]
 public class PlayerController : MonoBehaviour
 {
+    public static Action<bool> EventSetCanMove;
+
     public Camera camera;
     public GameObject interactIndicator;
     public float groundDistance = 0.2f;
@@ -25,7 +27,7 @@ public class PlayerController : MonoBehaviour
     private List<GameObject> decorationProjectiles;
     private int activeDecorationIndex;
 
-    private bool canMove;
+    public bool canMove;
 
     [SerializeField] private float interactionDistance = 0.5f;
     private Interactable interactableFocus;
@@ -51,13 +53,12 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] public Transform bucketTransform;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
+        canMove = true;
+
         characterController = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
-        DialogueUI.EventResumePlayerControl += RemoveFocus;
-        canMove = true;
 
         snowballPrefab = Resources.Load(snowballPrefabResource) as GameObject;
 
@@ -74,10 +75,14 @@ public class PlayerController : MonoBehaviour
         UIActions.EventActiveDecorationChanged?.Invoke(availableDecorations[activeDecorationIndex]);
 
         mudTime = 0.0f;
+
+        EventSetCanMove += SetCanMove;
+        DialogueUI.EventResumePlayerControl += RemoveFocus;
     }
 
     private void OnDestroy()
     {
+        EventSetCanMove -= SetCanMove;
         DialogueUI.EventResumePlayerControl -= RemoveFocus;
     }
 
@@ -102,8 +107,8 @@ public class PlayerController : MonoBehaviour
         if (interactableFocus != null)
         {
             // Face interacting object
-            //animator.SetBool("isRunning", false);
-            //animator.SetBool("isFlying", false);
+            animator.SetBool("isRunning", false);
+            animator.SetBool("isFlying", false);
             Vector3 interactDir = (interactableFocus.transform.position - transform.position).normalized;
             Quaternion lookRotation = Quaternion.LookRotation(new Vector3(interactDir.x, 0f, interactDir.z));
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5.0f);
@@ -290,9 +295,9 @@ public class PlayerController : MonoBehaviour
         }
 
         //animations
-        //animator.SetBool("isRunning", direction.magnitude >= 0.1f);
-        //animator.SetBool("isGrounded", isGrounded);
-        //animator.SetBool("isFalling", verticalSpeed < 0.2f);
+        animator.SetBool("isRunning", direction.magnitude >= 0.1f);
+        animator.SetBool("isGrounded", isGrounded);
+        animator.SetBool("isFalling", verticalSpeed < 0.2f);
 
         if (mudTime > 0)
         {
@@ -303,8 +308,8 @@ public class PlayerController : MonoBehaviour
 
     void SetFocus(Interactable newFocus)
     {
-        //animator.SetBool("isRunning", false);
-        //animator.SetBool("isFlying", false);
+        animator.SetBool("isRunning", false);
+        animator.SetBool("isFlying", false);
         interactableFocus = newFocus;
 
         var target = newFocus.GetComponentInParent<ThirdPersonCamera.Targetable>();
@@ -396,5 +401,16 @@ public class PlayerController : MonoBehaviour
         snowball.transform.LookAt(aim);
         Rigidbody b = snowball.GetComponent<Rigidbody>();
         b.AddForce(mouseDirection.normalized * 500f);
+    }
+
+    public void SetCanMove(bool value)
+    {
+        canMove = value;
+
+        if (!canMove)
+        {
+            animator.SetBool("isRunning", false);
+            animator.SetBool("isFlying", false);
+        }
     }
 }

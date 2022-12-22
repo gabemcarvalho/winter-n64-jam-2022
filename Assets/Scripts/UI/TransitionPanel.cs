@@ -39,6 +39,7 @@ public class TransitionPanel : MonoBehaviour
             if (alpha >= 1.0f)
             {
                 fadingOut = false;
+                EventTransitionEnded?.Invoke();
             }
 
             UpdateAlpha();
@@ -47,10 +48,10 @@ public class TransitionPanel : MonoBehaviour
         {
             alpha -= Time.unscaledDeltaTime / fadeTime;
 
-            if (alpha <= 0.0f)
-            {
-                EventTransitionEnded?.Invoke();
-            }
+            //if (alpha <= 0.0f)
+            //{
+            //    EventTransitionEnded?.Invoke();
+            //}
 
             UpdateAlpha();
         }
