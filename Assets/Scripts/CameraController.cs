@@ -14,6 +14,15 @@ public class CameraController : MonoBehaviour
     public ThirdPersonCamera.CameraInputSampling_FreeForm cameraInput;
     public ThirdPersonCamera.LockOnTarget lockOnTarget;
 
+<<<<<<< Updated upstream
+=======
+    private CutsceneCamera cutsceneCamera;
+    private TitleScreenCamera titleScreenCamera;
+    public MiniGameCamera miniGameCamera;
+
+    
+
+>>>>>>> Stashed changes
     public Vector3 cameraOffsetTarget;
 
     // Start is called before the first frame update
@@ -23,6 +32,8 @@ public class CameraController : MonoBehaviour
         freeForm = GetComponent<ThirdPersonCamera.FreeForm>();
         cameraInput = GetComponent<ThirdPersonCamera.CameraInputSampling_FreeForm>();
         lockOnTarget = GetComponent<ThirdPersonCamera.LockOnTarget>();
+
+        miniGameCamera = GetComponent<MiniGameCamera>();
 
         cameraInput.mouseSensitivity.x = xSensitivity;
         cameraInput.mouseSensitivity.y = ySensitivity;
@@ -88,4 +99,51 @@ public class CameraController : MonoBehaviour
         cameraController.pivotRotation = Quaternion.identity;
         cameraOffsetTarget = normalCameraOffset;
     }
+<<<<<<< Updated upstream
+=======
+
+    void EnableMainMenuCamera()
+    {
+        DisableCamera();
+    }
+
+    // This probably won't interfere with other camera events for this game
+    void EnableCutsceneCamera()
+    {
+        cameraController.enabled = false;
+        cutsceneCamera.enabled = true;
+    }
+
+    void DisableCutsceneCamera()
+    {
+        cameraController.enabled = true;
+        cutsceneCamera.enabled = false;
+    }
+
+    void EnableTitleCamera()
+    {
+        cameraController.enabled = false;
+        titleScreenCamera.enabled = true;
+    }
+
+    void DisableTitleCamera()
+    {
+        cameraController.enabled = true;
+        titleScreenCamera.enabled = false;
+    }
+
+    public void EnableMiniGame() {
+        cameraController.enabled = false;
+        DisableCamera();
+        miniGameCamera.enabled = true;
+
+    }
+    public void DisableMiniGame()
+    {
+        cameraController.enabled = true;
+        EnableCamera();
+        miniGameCamera.enabled = false;
+
+    }
+>>>>>>> Stashed changes
 }

@@ -4293,6 +4293,12 @@ GameObject:
   - component: {fileID: 963194234}
   - component: {fileID: 963194233}
   - component: {fileID: 963194237}
+<<<<<<< Updated upstream
+=======
+  - component: {fileID: 963194238}
+  - component: {fileID: 963194239}
+  - component: {fileID: 963194240}
+>>>>>>> Stashed changes
   m_Layer: 0
   m_Name: Game Camera
   m_TagString: MainCamera
@@ -4516,6 +4522,15 @@ MonoBehaviour:
   targetChangeLerp: 3
   xSensitivity: 4.5
   ySensitivity: 3
+<<<<<<< Updated upstream
+=======
+  cameraController: {fileID: 0}
+  freeForm: {fileID: 0}
+  cameraInput: {fileID: 0}
+  lockOnTarget: {fileID: 0}
+  miniGameCamera: {fileID: 0}
+  cameraOffsetTarget: {x: 0, y: 0, z: 0}
+>>>>>>> Stashed changes
 --- !u!114 &963194235
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4568,6 +4583,53 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e856a77bbfab43d4681b22d5360da636, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+<<<<<<< Updated upstream
+=======
+--- !u!114 &963194238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1793e63f264c3214f953624a9481a745, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &963194239
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9f42451088836f418aac86e264f2263, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  position: {x: -17.6, y: 13.1, z: -17.6}
+  rotation: {x: -11, y: 40, z: 0}
+  amplitude: 10
+  speed: 0.0002
+--- !u!114 &963194240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f5c2e9374ba7470d819b22fd2d9052b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  treePos: {fileID: 1028397572}
+  x: 0
+  y: 0
+  z: 0
+>>>>>>> Stashed changes
 --- !u!1 &964389086
 GameObject:
   m_ObjectHideFlags: 0
@@ -5181,9 +5243,19 @@ MonoBehaviour:
   mainCamera: {fileID: 963194227}
   target: {fileID: 1028397574}
   player: {fileID: 565868776}
+<<<<<<< Updated upstream
   gun: {fileID: 0}
+=======
+  bucketResource: Assets/Models/Bucket.fbx
+  bucketPrefab: {fileID: 238449861}
+  shadow: {fileID: 0}
+>>>>>>> Stashed changes
   tree: {fileID: 1028397571}
   uiElements: {fileID: 1839531866}
+  startMinigame: 0
+  xBuck: 0
+  yBuck: 0
+  zBuck: 0
   snowballPrefabResource: Decorations/Snowball
   miniSnowballPrefab: {fileID: 0}
 --- !u!65 &1054476639

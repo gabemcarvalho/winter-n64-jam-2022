@@ -63,7 +63,7 @@ public class PlayerController : MonoBehaviour
 
         collectibleLayer = LayerMask.NameToLayer("Collectible");
         mudLayer = LayerMask.NameToLayer("Mud");
-
+        
         activeDecorationIndex = 0;
         decorationProjectiles = new List<GameObject>();
         foreach (DecorationInfo info in availableDecorations)
