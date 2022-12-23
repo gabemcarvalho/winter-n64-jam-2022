@@ -137,6 +137,7 @@ public class PlayerController : MonoBehaviour
             activeDecorationIndex = (activeDecorationIndex + 1) % availableDecorations.Count;
             UIActions.EventActiveDecorationChanged?.Invoke(availableDecorations[activeDecorationIndex]);
         }
+        changeDecorationIndex();
 
         // ground check
         RaycastHit groundHit;
@@ -365,7 +366,9 @@ public class PlayerController : MonoBehaviour
             DialogueUI.EventShowDialogue.Invoke(collectible.collectionDialog);
             Debug.Log(availableDecorations);
             Debug.Log(decorationProjectiles);
-            
+            Debug.Log(activeDecorationIndex);
+            Debug.Log(decorationProjectiles[activeDecorationIndex]);
+
             Destroy(other.gameObject);
         }
     }
@@ -413,6 +416,24 @@ public class PlayerController : MonoBehaviour
         {
             animator.SetBool("isRunning", false);
             animator.SetBool("isFlying", false);
+        }
+    }
+    public void changeDecorationIndex() {
+
+        if (Input.GetKeyDown(KeyCode.G)) {
+            if (activeDecorationIndex >= decorationProjectiles.Count)
+            {
+                activeDecorationIndex = 0;
+                Debug.Log(activeDecorationIndex);
+                Debug.Log(decorationProjectiles[activeDecorationIndex]);
+            }
+            else {
+
+                activeDecorationIndex++;
+                Debug.Log(activeDecorationIndex);
+                Debug.Log(decorationProjectiles[activeDecorationIndex]);
+            }
+
         }
     }
 }
