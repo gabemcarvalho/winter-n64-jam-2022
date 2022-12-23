@@ -21,7 +21,7 @@ public class TitleScreenCamera : MonoBehaviour
 
     void Update()
     {
-        time += Time.unscaledTime;
+        time += Time.unscaledDeltaTime;
         camera.transform.position = position;
         camera.transform.rotation = Quaternion.Euler(rotation + Vector3.up * amplitude * Mathf.Sin(time * speed));
     }
