@@ -20,7 +20,7 @@ public class CameraController : MonoBehaviour
 
     private CutsceneCamera cutsceneCamera;
     private TitleScreenCamera titleScreenCamera;
-
+    MiniGameCamera miniGameCamera;
     public Vector3 cameraOffsetTarget;
 
     // Start is called before the first frame update
@@ -32,6 +32,7 @@ public class CameraController : MonoBehaviour
         lockOnTarget = GetComponent<ThirdPersonCamera.LockOnTarget>();
         cutsceneCamera = GetComponent<CutsceneCamera>();
         titleScreenCamera = GetComponent<TitleScreenCamera>();
+        miniGameCamera = GetComponent<MiniGameCamera>();
 
         cameraInput.mouseSensitivity.x = xSensitivity;
         cameraInput.mouseSensitivity.y = ySensitivity;
@@ -135,5 +136,19 @@ public class CameraController : MonoBehaviour
     {
         cameraController.enabled = true;
         titleScreenCamera.enabled = false;
+    }
+    public void EnableMiniGame()
+    {
+        cameraController.enabled = false;
+        DisableCamera();
+        miniGameCamera.enabled = true;
+
+    }
+    public void DisableMiniGame()
+    {
+        cameraController.enabled = true;
+        EnableCamera();
+        miniGameCamera.enabled = false;
+
     }
 }

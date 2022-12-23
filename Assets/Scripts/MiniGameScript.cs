@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net.Sockets;
 using ThirdPersonCamera;
 using UnityEngine;
 using static UnityEngine.UI.ContentSizeFitter;
@@ -11,12 +12,12 @@ public class MiniGameScript : MonoBehaviour
 {
     // camera componenet control
     [SerializeField] Camera mainCamera;
-    CameraController miniGameCamera;
+    CameraController gameCameraScript;
     // target game object
     [SerializeField] Targetable target;
     // to disable/enable the player or the gun
     public GameObject player;
-    public GameObject gun;
+    //public GameObject gun;
     [SerializeField] GameObject tree;
     private PlayerController playingCharacter = new PlayerController();
 
@@ -25,6 +26,7 @@ public class MiniGameScript : MonoBehaviour
     // a controling variable to start the mini game or exit it 
     bool startMinigame = false;
     Vector3 playerOldPosition;
+    private Vector3 treeOldPosition;
     Vector3 cameraOldPosition;
     private float rotationSpeed = 30f;
     bool aiming;
@@ -35,11 +37,22 @@ public class MiniGameScript : MonoBehaviour
     private List<GameObject> decorationtiles;
     private int DecorationIndex;
 
+    [SerializeField] string bucketResource = "Assets/Models/Bucket.fbx";
+    public GameObject bucketPrefab;
+    GameObject bucket;
+    Bucket bucketScript;
+
+
+    public float xBuck;
+    public float yBuck;
+    public float zBuck;
+
 
     private void Start()
     {
-        miniGameCamera = mainCamera.gameObject.GetComponent<CameraController>();
+        gameCameraScript = mainCamera.gameObject.GetComponent<CameraController>();
         playingCharacter = player.gameObject.GetComponent<PlayerController>();
+        bucketScript = bucketPrefab.GetComponent<Bucket>();
 
         miniSnowballPrefab = Resources.Load(snowballPrefabResource) as GameObject;
         //UIActions.EventActiveDecorationChanged?.Invoke(playingCharacter.availableDecorations[playingCharacter.activeDecorationIndex]);
@@ -151,32 +164,28 @@ public class MiniGameScript : MonoBehaviour
     {
 
         //this.GetComponent<BoxCollider>().enabled = false;
-        uiElements.SetActive(true);
-        // storing old position of camera & player
-        cameraOldPosition = mainCamera.transform.position;
-        playerOldPosition = player.transform.position;
-        player.transform.position = mainCamera.transform.position + new Vector3(0,0,1);
-        player.transform.gameObject.SetActive(false);
-        //gun.GetComponent<Bucket>().followTransform = null ;
-
-        //miniGameCamera.freeForm.enabled = false;
-        //miniGameCamera.lockOnTarget.followTarget = target;
-        mainCamera.GetComponent<CameraController>().enabled = false;
+        //uiElements.SetActive(true);
         
-        mainCamera.transform.LookAt(tree.transform.position);
+        // storing old position of camera & player
+        
+        
+        treeOldPosition = tree.transform.position;
+        tree.transform.position += new Vector3(1000, 0, 0);
+        gameCameraScript.EnableMiniGame();
+        bucket = Instantiate(bucketPrefab);
+        bucket.gameObject.GetComponent<Bucket>().enabled = false;
+        bucket.transform.position = mainCamera.transform.position + new Vector3(xBuck, yBuck, zBuck);
         //playingCharacter.bucketTransform.position = mainCamera.transform.position + new Vector3(0, 0, 0);
 
         Vector3 targetPos = target.transform.position;
         Vector3 lineOfSight = new Vector3(targetPos.x - 10, 0, targetPos.z - 10).normalized;
 
-        miniGameCamera.cameraOffsetTarget = new Vector3(1.0f, 0.7f, 0.3f * lineOfSight.magnitude);
+        gameCameraScript.cameraOffsetTarget = new Vector3(1.0f, 0.7f, 0.3f * lineOfSight.magnitude);
 
 
         // masking undesirable layers during the play 
         LayerCullingHide(mainCamera, 6);
         hide(mainCamera, "Ground");
-        //LayerCullingHide(mainCamera, 12);
-        //hide(mainCamera, "Tree");
         LayerCullingHide(mainCamera, 8);
         hide(mainCamera, "NPC");
         LayerCullingHide(mainCamera, 4);
@@ -188,21 +197,21 @@ public class MiniGameScript : MonoBehaviour
     }
     void ExitMiniGame()
     {
-        player.transform.gameObject.SetActive(true);
+        
+        Destroy(bucket);
         //miniGameCamera.lockOnTarget.followTarget = null;
-        player.transform.position = playerOldPosition - new Vector3(0, 0, 1);
-        this.GetComponent<BoxCollider>().enabled = true;
-        mainCamera.GetComponent<CameraController>().enabled = true ;
-        //gun.GetComponent<Bucket>().followTransform = player.transform;
+        playingCharacter.OnFellInLake();
+        gameCameraScript.DisableMiniGame();
+        tree.transform.position = treeOldPosition;
+       
         LayerCullingShow(mainCamera, 6);
         show(mainCamera, "Ground");
-        //LayerCullingShow(mainCamera, 12);
-        //show(mainCamera, "Tree");
+        
         LayerCullingShow(mainCamera, 8);
         show(mainCamera, "NPC");
         LayerCullingShow(mainCamera, 4);
         show(mainCamera, "Water");
-        uiElements.SetActive(false);
+        //uiElements.SetActive(false);
 
 
     }
@@ -213,7 +222,7 @@ public class MiniGameScript : MonoBehaviour
         Vector3 aim = mainCamera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, 5.0f));
         Vector3 mouseDirection = aim - mainCamera.transform.position;
 
-        GameObject snowball = Instantiate(decorationtiles[DecorationIndex], playingCharacter.bucketTransform.position, Quaternion.identity);
+        GameObject snowball = Instantiate(decorationtiles[DecorationIndex], bucket.transform.position, Quaternion.identity);
         snowball.transform.LookAt(aim);
         Rigidbody b = snowball.GetComponent<Rigidbody>();
         b.AddForce(mouseDirection.normalized * 500f);
