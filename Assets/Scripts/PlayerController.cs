@@ -363,7 +363,9 @@ public class PlayerController : MonoBehaviour
             Collectible collectible = other.gameObject.GetComponent<Collectible>();
             AddDecoration(collectible.decorationInfo);
             DialogueUI.EventShowDialogue.Invoke(collectible.collectionDialog);
-
+            Debug.Log(availableDecorations);
+            Debug.Log(decorationProjectiles);
+            
             Destroy(other.gameObject);
         }
     }

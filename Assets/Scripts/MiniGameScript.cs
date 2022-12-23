@@ -73,6 +73,8 @@ public class MiniGameScript : MonoBehaviour
         {
 
             startMinigame = true;
+            //bucket = Instantiate(bucketPrefab);
+            //bucket.gameObject.GetComponent<Bucket>().enabled = false;
             EnterMiniGame();
 
             Debug.Log(startMinigame);
@@ -118,6 +120,7 @@ public class MiniGameScript : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.C))
             {
                 //this.gameObject.layer = 12;
+                //Destroy(bucket);
                 ExitMiniGame();
                 startMinigame = false;
 
@@ -165,16 +168,15 @@ public class MiniGameScript : MonoBehaviour
 
         //this.GetComponent<BoxCollider>().enabled = false;
         //uiElements.SetActive(true);
-        
+
         // storing old position of camera & player
-        
-        
+
+        //player.SetActive(false);
         treeOldPosition = tree.transform.position;
         tree.transform.position += new Vector3(1000, 0, 0);
         gameCameraScript.EnableMiniGame();
-        bucket = Instantiate(bucketPrefab);
-        bucket.gameObject.GetComponent<Bucket>().enabled = false;
-        bucket.transform.position = mainCamera.transform.position + new Vector3(xBuck, yBuck, zBuck);
+        
+        //bucket.transform.position = mainCamera.transform.position + new Vector3(xBuck, yBuck, zBuck);
         //playingCharacter.bucketTransform.position = mainCamera.transform.position + new Vector3(0, 0, 0);
 
         Vector3 targetPos = target.transform.position;
@@ -197,8 +199,8 @@ public class MiniGameScript : MonoBehaviour
     }
     void ExitMiniGame()
     {
+        //player.SetActive(true);
         
-        Destroy(bucket);
         //miniGameCamera.lockOnTarget.followTarget = null;
         playingCharacter.OnFellInLake();
         gameCameraScript.DisableMiniGame();
@@ -222,7 +224,7 @@ public class MiniGameScript : MonoBehaviour
         Vector3 aim = mainCamera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, 5.0f));
         Vector3 mouseDirection = aim - mainCamera.transform.position;
 
-        GameObject snowball = Instantiate(decorationtiles[DecorationIndex], bucket.transform.position, Quaternion.identity);
+        GameObject snowball = Instantiate(decorationtiles[DecorationIndex], playingCharacter.bucketTransform.position, Quaternion.identity);
         snowball.transform.LookAt(aim);
         Rigidbody b = snowball.GetComponent<Rigidbody>();
         b.AddForce(mouseDirection.normalized * 500f);
