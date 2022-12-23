@@ -11,6 +11,7 @@ public class UIActions : MonoBehaviour
     public static Action<bool> EventExitTextboxCamera;
     public static Action EventUnlockCursor;
     public static Action EventLockCursor;
+    public static Action EventHideCursor;
     public static Action<DecorationInfo> EventActiveDecorationChanged;
     public static Action EventStartGame;
 
@@ -110,6 +111,7 @@ public class UIActions : MonoBehaviour
 
     public void OnPlayButtonPressed()
     {
+        EventHideCursor?.Invoke();
         TransitionPanel.EventTransitionEnded += PlayIntroDialog;
         TransitionPanel.EventStartTransition?.Invoke(0.8f);
     }

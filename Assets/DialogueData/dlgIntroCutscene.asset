@@ -19,8 +19,8 @@ MonoBehaviour:
     showTextbox: 1
     moveCamera: 1
     cameraRotation: {x: 10, y: -180, z: 0}
-    cameraStartPosition: {x: -17.8, y: 7.1, z: -15.35}
-    cameraEndPosition: {x: -18.3, y: 7.1, z: -15.35}
+    cameraStartPosition: {x: -17.8, y: 7.1, z: -14.64}
+    cameraEndPosition: {x: -18.3, y: 7.1, z: -14.64}
     duration: 6
     specialEvent: 
   - text: 

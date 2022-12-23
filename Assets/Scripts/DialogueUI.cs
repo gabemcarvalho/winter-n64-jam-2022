@@ -73,7 +73,7 @@ public class DialogueUI : MonoBehaviour
 
                 tmpNamebox.text = textBlock.characterName;
                 yield return revealText.Run(textBlock.text, tmpTextbox);
-                yield return new WaitUntil(() => Input.GetButtonDown("Jump"));
+                yield return new WaitUntil(() => Input.GetButtonDown("Jump") || Input.GetMouseButtonDown(0));
 
                 continue;
             }

@@ -44,7 +44,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 slopeVelocity = Vector3.zero;
     private Vector3 hitNormal = Vector3.zero;
 
-    private bool aimMode = false;
+    public bool aimMode = false;
 
     private int collectibleLayer;
     private int mudLayer;
@@ -248,18 +248,16 @@ public class PlayerController : MonoBehaviour
             interactIndicator.SetActive(false);
         }
 
-
-        if (isGrounded && Input.GetButtonDown("Jump"))
+        if (isGrounded)
         {
-
-            if (interactableCastResult == true)
+            if (interactableCastResult && (Input.GetButtonDown("Jump") || Input.GetMouseButtonDown(0)))
             {
                 Interactable interactable = interactableHit.collider.GetComponent<Interactable>();
                 SetFocus(interactable);
                 interactIndicator.GetComponent<RotateAndBob>().ResetBobTime();
                 interactIndicator.SetActive(false);
             }
-            else
+            else if (Input.GetButtonDown("Jump"))
             {
                 // jump
                 float jumpSpeed = jumpHeight * 2f * gravityUp;
@@ -360,6 +358,8 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.layer == collectibleLayer)
         {
             canMove = false;
+            animator.SetBool("isRunning", false);
+
             Collectible collectible = other.gameObject.GetComponent<Collectible>();
             AddDecoration(collectible.decorationInfo);
             DialogueUI.EventShowDialogue.Invoke(collectible.collectionDialog);
@@ -397,7 +397,7 @@ public class PlayerController : MonoBehaviour
         Vector3 aim = camera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, 5.0f));
         Vector3 mouseDirection = aim - camera.transform.position;
 
-        GameObject snowball = Instantiate(decorationProjectiles[activeDecorationIndex], bucketTransform.position, Quaternion.identity);
+        GameObject snowball = Instantiate(decorationProjectiles[activeDecorationIndex], bucketTransform.position + bucketTransform.forward * 0.3f, Quaternion.identity);
         snowball.transform.LookAt(aim);
         Rigidbody b = snowball.GetComponent<Rigidbody>();
         b.AddForce(mouseDirection.normalized * 500f);

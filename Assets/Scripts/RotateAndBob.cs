@@ -5,9 +5,9 @@ using UnityEngine;
 public class RotateAndBob : MonoBehaviour
 {
     [SerializeField] private Transform indicatorTransform;
-    [SerializeField] private float bobPeriod = 1.0f;
-    [SerializeField] private float bobAmplitude = 0.1f;
-    [SerializeField] private float rotationSpeed = 1.0f;
+    [SerializeField] public float bobPeriod = 1.0f;
+    [SerializeField] public float bobAmplitude = 0.1f;
+    [SerializeField] public float rotationSpeed = 1.0f;
 
     private float bobTime;
     private void Start()
