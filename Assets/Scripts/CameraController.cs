@@ -124,11 +124,15 @@ public class CameraController : MonoBehaviour
     void EnableCutsceneCamera()
     {
         cameraController.enabled = false;
+        freeForm.enabled = false;
+        cameraController.enabled = false;
         cutsceneCamera.enabled = true;
     }
 
     void DisableCutsceneCamera()
     {
+        cameraController.enabled = true;
+        freeForm.enabled = true;
         cameraController.enabled = true;
         cutsceneCamera.enabled = false;
     }

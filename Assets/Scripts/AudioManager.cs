@@ -15,6 +15,8 @@ public class AudioManager : MonoBehaviour
     private IntroloopPlayer introloopPlayer;
     [SerializeField] private IntroloopAudio overworldMusic;
     private float overworldMusicTime;
+    [SerializeField] public IntroloopAudio winStinger;
+    [SerializeField] public IntroloopAudio creditsMusic;
 
     public AudioManager GetSelf() => this;
 
@@ -82,5 +84,12 @@ public class AudioManager : MonoBehaviour
     {
         overworldMusicTime = introloopPlayer.GetPlayheadTime();
         StopMusic(0.0f);
+    }
+
+    public void PlayCreditsMusic()
+    {
+        overworldMusic = creditsMusic;
+        overworldMusicTime = 0.0f;
+        ResumeOverworldMusic(0.0f);
     }
 }

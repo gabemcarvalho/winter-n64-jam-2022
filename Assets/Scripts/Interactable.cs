@@ -1,9 +1,12 @@
 using UnityEngine;
+using System;
 
 public class Interactable : MonoBehaviour
 {
     [SerializeField] private DialogueObject interactionDialogue;
     [SerializeField] private float indicatorHeight = 1.0f;
+
+    [NonSerialized] public DialogueObject overrideDialogue;
 
     private Animator animator;
 
@@ -25,6 +28,8 @@ public class Interactable : MonoBehaviour
         animator = GetComponent<Animator>();
 
         targetQuaternion = transform.rotation;
+
+        overrideDialogue = null;
     }
 
     private void Update()
@@ -49,5 +54,10 @@ public class Interactable : MonoBehaviour
         {
             animator.SetBool("isTalking", false);
         }
+    }
+
+    public DialogueObject GetDialogue()
+    {
+        return overrideDialogue != null ? overrideDialogue : interactionDialogue;
     }
 }

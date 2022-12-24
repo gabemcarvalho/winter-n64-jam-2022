@@ -264,6 +264,8 @@ public class PlayerController : MonoBehaviour
                 if (mudTime > 0) jumpSpeed /= 5.0f;
 
                 verticalSpeed = Mathf.Sqrt(jumpSpeed);
+
+                AudioManager.GetInstance().PlaySound("Jump");
             }
         }
 
@@ -313,7 +315,7 @@ public class PlayerController : MonoBehaviour
 
         var target = newFocus.GetComponentInParent<ThirdPersonCamera.Targetable>();
         UIActions.EventEnterTextboxCamera?.Invoke(target);
-        DialogueUI.EventShowDialogue.Invoke(interactableFocus.InteractionDialogue);
+        DialogueUI.EventShowDialogue.Invoke(interactableFocus.GetDialogue());
     }
 
     void RemoveFocus()
@@ -400,6 +402,8 @@ public class PlayerController : MonoBehaviour
         characterController.enabled = true;
 
         verticalSpeed = 0;
+
+        AudioManager.GetInstance().PlaySound("Splash");
     }
     public void ShootDecoration()
     {
@@ -412,6 +416,15 @@ public class PlayerController : MonoBehaviour
         snowball.transform.LookAt(aim);
         Rigidbody b = snowball.GetComponent<Rigidbody>();
         b.AddForce(mouseDirection.normalized * 500f);
+
+        if (snowball.tag == "SnowBall")
+        {
+            AudioManager.GetInstance().PlaySound("SnowBlast");
+        }
+        else
+        {
+            AudioManager.GetInstance().PlaySound("DecorationBlast");
+        }
     }
 
     public void SetCanMove(bool value)

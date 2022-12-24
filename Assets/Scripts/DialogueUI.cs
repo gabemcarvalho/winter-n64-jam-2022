@@ -48,19 +48,23 @@ public class DialogueUI : MonoBehaviour
         bool textboxVisible = false;
         foreach (TextBlock textBlock in dialogueObject.Dialogue)
         {
+            if (dialogueObject.Mode == DialogueObject.CameraMode.Cutscene && textBlock.moveCamera)
+            {
+                CutsceneCamera.EventChangeCutsceneCamera?.Invoke(textBlock.cameraRotation, textBlock.cameraStartPosition, textBlock.cameraEndPosition, textBlock.duration);
+            }
+
             if (!string.IsNullOrEmpty(textBlock.specialEvent))
             {
                 if (textBlock.specialEvent == "StartGame")
                 {
                     AudioManager.GetInstance().ResumeOverworldMusic(0.0f);
                 }
+                else if (textBlock.specialEvent == "Credits")
+                {
+                    AudioManager.GetInstance().PlayCreditsMusic();
+                }
 
                 continue;
-            }
-
-            if (dialogueObject.Mode == DialogueObject.CameraMode.Cutscene && textBlock.moveCamera)
-            {
-                CutsceneCamera.EventChangeCutsceneCamera?.Invoke(textBlock.cameraRotation, textBlock.cameraStartPosition, textBlock.cameraEndPosition, textBlock.duration);
             }
 
             if (textBlock.showTextbox)

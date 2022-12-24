@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: StockingInfo
   m_EditorClassIdentifier: 
   displayName: Stocking
-  uiIcon: {fileID: 21300000, guid: 881798b77426a8f47b533dcc4767e9e5, type: 3}
+  uiIcon: {fileID: 21300000, guid: 072f52b1400490b44b81eb7ff8a6a95c, type: 3}
   projectileResource: Decorations/Stocking

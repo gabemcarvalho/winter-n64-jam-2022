@@ -18,7 +18,8 @@ public class Decoratable : MonoBehaviour
 
     List<Decoration> decorations;
 
-    public RequirementBlock[] requirements;
+    [SerializeField] [TextArea(4, 10)] public string requestText;
+    [SerializeField] public RequirementBlock[] requirements;
     [NonSerialized] public bool completed;
 
     void Awake()
@@ -68,6 +69,8 @@ public class Decoratable : MonoBehaviour
             Destroy(collision.gameObject);
         }
 
+        AudioManager.GetInstance().PlaySound("TreeImpact");
+
         completed = CheckRequirement();
     }
 
@@ -80,6 +83,7 @@ public class Decoratable : MonoBehaviour
         }
 
         mesh.colors32 = colourList.ToArray();
+        GetComponent<MeshFilter>().mesh = mesh;
     }
 
     public void RandomVertexColours()
@@ -93,6 +97,7 @@ public class Decoratable : MonoBehaviour
         }
 
         mesh.colors32 = colourList.ToArray();
+        GetComponent<MeshFilter>().mesh = mesh;
     }
 
     public void ColourTriangle(int triIndex, Color32 col)
@@ -129,8 +134,11 @@ public class Decoratable : MonoBehaviour
             else {
                 amounts.Add(key,1);
             }
-           
         }
+
+        int paintedVertices = mesh.colors32.Where(x => x.a > 0).Count();
+        int snowPercent = (int)((float)paintedVertices / mesh.colors32.Length * 100.0f);
+        amounts.Add("Snow", snowPercent);
 
         foreach (RequirementBlock requirementBlock in requirements) {
 
@@ -156,8 +164,22 @@ public class Decoratable : MonoBehaviour
             }
         }
 
-        
         return true;
+    }
+
+    public void UpdateCompletion()
+    {
+        completed = CheckRequirement();
+    }
+
+    public void ResetDecorations()
+    {
+        ResetVertexColours();
+        foreach (Decoration decoration in decorations)
+        {
+            Destroy(decoration.gameObject);
+        }
+        decorations.Clear();
     }
     
 }

@@ -23,6 +23,33 @@ MonoBehaviour:
     cameraEndPosition: {x: -18.3, y: 7.1, z: -14.64}
     duration: 6
     specialEvent: 
+  - text: We should help everyone decorate their trees!
+    characterName: Mr. Bucket
+    showTextbox: 1
+    moveCamera: 0
+    cameraRotation: {x: 10, y: -180, z: 0}
+    cameraStartPosition: {x: -17.8, y: 7.1, z: -14.64}
+    cameraEndPosition: {x: -18.3, y: 7.1, z: -14.64}
+    duration: 6
+    specialEvent: 
+  - text: But all the decorations got lost afte the storm last night!
+    characterName: Mr. Bucket
+    showTextbox: 1
+    moveCamera: 0
+    cameraRotation: {x: 10, y: -180, z: 0}
+    cameraStartPosition: {x: -17.8, y: 7.1, z: -14.64}
+    cameraEndPosition: {x: -18.3, y: 7.1, z: -14.64}
+    duration: 6
+    specialEvent: 
+  - text: Let's search for them together!
+    characterName: Mr. Bucket
+    showTextbox: 1
+    moveCamera: 0
+    cameraRotation: {x: 10, y: -180, z: 0}
+    cameraStartPosition: {x: -17.8, y: 7.1, z: -14.64}
+    cameraEndPosition: {x: -18.3, y: 7.1, z: -14.64}
+    duration: 6
+    specialEvent: 
   - text: 
     characterName: 
     showTextbox: 0

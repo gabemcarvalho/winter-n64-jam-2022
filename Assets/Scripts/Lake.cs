@@ -34,6 +34,7 @@ public class Lake : MonoBehaviour
                 Vector3 icePosition = other.transform.position;
                 icePosition.y = transform.position.y + 0.18f;
                 Instantiate(icePrefab, icePosition, Quaternion.identity);
+                AudioManager.GetInstance().PlaySound("Ice");
             }
             
             Destroy(other.gameObject);

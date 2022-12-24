@@ -1,9 +1,13 @@
 using UnityEngine;
 using System;
 using System.Linq;
+using System.Collections;
 
 public class MiniGameScript : MonoBehaviour
 {
+    public static Action EventResetDecoratable;
+    public static Action EventFinishMinigame;
+
     [SerializeField] public E7.Introloop.IntroloopAudio musicLoop;
 
     // camera componenet control
@@ -12,13 +16,16 @@ public class MiniGameScript : MonoBehaviour
     [SerializeField] Decoratable decoratable;
     [SerializeField]PlayerController player;
 
-    // a controling variable to start the mini game or exit it 
+    bool canEnterMinigame = false;
     bool inMinigame = false;
 
     private float oldCameraFoV;
     private Vector3 treeOldPosition;
  
     [SerializeField]Transform bucket;
+
+    [SerializeField] private Interactable npcOwner;
+    [SerializeField] private DialogueObject successDialogue;
 
     private void Awake()
     {
@@ -27,46 +34,65 @@ public class MiniGameScript : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Player" && !inMinigame)
+        if (other.gameObject.tag == "Player")
         {
-            inMinigame = true;
-            EnterMiniGame();
+            PlayerController player = other.gameObject.GetComponent<PlayerController>();
+            if (!player.canMove) return;
+
+            canEnterMinigame = true;
+            UIActions.EventSetDecoratePromptEnabled?.Invoke(true);
         }
     }
 
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.tag == "Player")
+        {
+            canEnterMinigame = false;
+            UIActions.EventSetDecoratePromptEnabled?.Invoke(false);
+        }
+    }
 
     // Update is called once per frame
     void Update()
     {
-        if (!inMinigame) return;
-
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (inMinigame)
         {
-            UIActions.EventPauseGame?.Invoke();
-            inMinigame = false;
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                UIActions.EventPauseGame?.Invoke();
+                inMinigame = false;
+                return;
+            }
+            if (Input.GetKey(KeyCode.A))
+            {
+                MiniGameCamera.EventRotateAroundTree?.Invoke(false);
+            }
+            if (Input.GetKey(KeyCode.D))
+            {
+                MiniGameCamera.EventRotateAroundTree?.Invoke(true);
+            }
+            if (Input.GetKeyDown(KeyCode.E) || Input.GetMouseButtonDown(1))
+            {
+                player.activeDecorationIndex = (player.activeDecorationIndex + 1) % player.availableDecorations.Count;
+                UIActions.EventActiveDecorationChanged?.Invoke(player.availableDecorations[player.activeDecorationIndex]);
+            }
+            if (Input.GetMouseButtonDown(0))
+            {
+                ShootDecoration();
+            }
+            if (Input.GetKeyDown(KeyCode.C))
+            {
+                ExitMiniGame();
+                inMinigame = false;
+            }
+
             return;
         }
-        if (Input.GetKey(KeyCode.A))
+
+        if (canEnterMinigame && Input.GetButtonDown("Jump"))
         {
-            MiniGameCamera.EventRotateAroundTree?.Invoke(false);
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-            MiniGameCamera.EventRotateAroundTree?.Invoke(true);
-        }
-        if (Input.GetKeyDown(KeyCode.E) || Input.GetMouseButtonDown(1))
-        {
-            player.activeDecorationIndex = (player.activeDecorationIndex + 1) % player.availableDecorations.Count;
-            UIActions.EventActiveDecorationChanged?.Invoke(player.availableDecorations[player.activeDecorationIndex]);
-        }
-        if (Input.GetMouseButtonDown(0))
-        {
-            ShootDecoration();
-        }
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            ExitMiniGame();
-            inMinigame = false;
+            EnterMiniGame();
         }
     }
 
@@ -92,6 +118,7 @@ public class MiniGameScript : MonoBehaviour
 
     void EnterMiniGame()
     {
+        inMinigame = true;
         PlayerController.EventSetCanMove?.Invoke(false);
         bucket.gameObject.SetActive(true);
         treeOldPosition = tree.position;
@@ -116,15 +143,18 @@ public class MiniGameScript : MonoBehaviour
         AudioManager.GetInstance().StopOverworldMusic();
         AudioManager.GetInstance().PlayMusic(musicLoop);
 
+        UIActions.EventSetRequestText?.Invoke(decoratable.requestText);
         UIActions.EventShowMinigameUI?.Invoke();
         UIActions.EventResumeGame += ResumeMinigame;
+
+        EventResetDecoratable += ResetDecoratable;
+        EventFinishMinigame += FinishMinigame;
     }
 
     void ExitMiniGame()
     {
         PlayerController.EventSetCanMove?.Invoke(true);
         bucket.gameObject.SetActive(false);
-        player.OnFellInLake();
 
         decoratable.Move(treeOldPosition);
         decoratable.GetComponent<MeshCollider>().enabled = false;
@@ -142,13 +172,25 @@ public class MiniGameScript : MonoBehaviour
         mainCamera.fieldOfView = oldCameraFoV;
 
         AudioManager.GetInstance().StopMusic(0.0f);
-        AudioManager.GetInstance().ResumeOverworldMusic(3.0f);
-
+        
         UIActions.EventHideMinigameUI?.Invoke();
         UIActions.EventResumeGame -= ResumeMinigame;
 
         var decoratables = FindObjectsOfType<Decoratable>();
-        UIActions.EventUpdateDecoratedPercent?.Invoke((float)decoratables.Where(x => x.completed).Count() / decoratables.Length);
+        float decoratedPercent = (float)decoratables.Where(x => x.completed).Count() / decoratables.Length;
+        UIActions.EventUpdateDecoratedPercent?.Invoke(decoratedPercent);
+
+        if (decoratedPercent > 0.99f && !UIActions.PlayedCredits)
+        {
+            UIActions.EventPlayCredits?.Invoke();
+        }
+        else
+        {
+            AudioManager.GetInstance().ResumeOverworldMusic(3.0f);
+        }
+
+        EventResetDecoratable -= ResetDecoratable;
+        EventFinishMinigame -= FinishMinigame;
     }
 
     public void ShootDecoration()
@@ -170,5 +212,59 @@ public class MiniGameScript : MonoBehaviour
         UIActions.EventUnlockCursor?.Invoke();
     }
     
+    public void ResetDecoratable()
+    {
+        if (!inMinigame) return;
+
+        decoratable.ResetDecorations();
+    }
+
+    public void FinishMinigame()
+    {
+        if (!inMinigame) return;
+
+        decoratable.UpdateCompletion();
+
+        if (npcOwner != null)
+        {
+            if (decoratable.completed && successDialogue != null)
+            {
+                npcOwner.overrideDialogue = successDialogue;
+            }
+            else
+            {
+                npcOwner.overrideDialogue = null;
+            }
+        }
+
+        if (decoratable.completed)
+        {
+            StartCoroutine(SuccessEnumerator());
+        }
+        else
+        {
+            StartCoroutine(TryAgainEnumerator());
+        }
+    }
+
+    private IEnumerator SuccessEnumerator()
+    {
+        inMinigame = false;
+        AudioManager.GetInstance().PlayMusic(AudioManager.GetInstance().winStinger);
+        UIActions.EventSetSuccessEnabled?.Invoke(true);
+        yield return new WaitForSeconds(5f);
+        UIActions.EventSetSuccessEnabled?.Invoke(false);
+        ExitMiniGame();
+    }
+
+    private IEnumerator TryAgainEnumerator()
+    {
+        inMinigame = false;
+        AudioManager.GetInstance().StopMusic(1.5f);
+        UIActions.EventSetTryAgainEnabled?.Invoke(true);
+        yield return new WaitForSeconds(2.0f);
+        UIActions.EventSetTryAgainEnabled?.Invoke(false);
+        ExitMiniGame();
+    }
 }
 

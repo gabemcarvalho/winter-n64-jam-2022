@@ -33,7 +33,7 @@ public class RevealText : MonoBehaviour
 
             float time = scrollWaitTime;
             char current = tmpGUI.textInfo.characterInfo[i - 1].character;
-            if (current.ToString().Equals(",") || current.ToString().Equals("."))
+            if (current.ToString().Equals(",") || current.ToString().Equals(".") || current.ToString().Equals("?") || current.ToString().Equals("!"))
             {
                 time += 0.3f;
             }
@@ -57,6 +57,8 @@ public class RevealText : MonoBehaviour
             {
                 continue;
             }
+
+            AudioManager.GetInstance().PlaySound($"Text{(int)Random.Range(1.01f, 3.99f)}");
 
             yield return new WaitForSeconds(time);
         }
