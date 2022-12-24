@@ -148,6 +148,7 @@ public class CameraController : MonoBehaviour
     {
         miniGameCamera.FixOnTree(treeTransform);
         cameraInput.enabled = false;
+        freeForm.enabled = false;
         cameraController.enabled = false;
         //DisableCamera();
         miniGameCamera.enabled = true;
@@ -159,6 +160,7 @@ public class CameraController : MonoBehaviour
     {
         cameraController.enabled = true;
         cameraInput.enabled = true;
+        freeForm.enabled = true;
         //EnableCamera();
         miniGameCamera.enabled = false;
 

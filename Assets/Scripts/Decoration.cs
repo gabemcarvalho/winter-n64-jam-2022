@@ -6,7 +6,7 @@ public class Decoration : MonoBehaviour
 {
     [SerializeField] public float lifetime = 5.0f;
 
-    [SerializeField] DecorationInfo decorationReference;
+    [SerializeField] public DecorationInfo decorationReference;
 
     public bool stuck; 
 

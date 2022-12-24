@@ -4854,6 +4854,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   meshCollider: {fileID: 925786235}
+  requirements: []
 --- !u!64 &925786235
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -5890,8 +5891,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 963194227}
   tree: {fileID: 1028397572}
+  decoratble: {fileID: 1341168803}
   player: {fileID: 565868777}
   uiElements: {fileID: 1839531866}
+  treeOldPosition: {x: 0, y: 0, z: 0}
   bucket: {fileID: 1273246228}
   xBuck: 0
   yBuck: 0
@@ -7480,6 +7483,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   meshCollider: {fileID: 1330464250}
+  requirements: []
 --- !u!64 &1330464250
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -7622,6 +7626,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   meshCollider: {fileID: 1341168804}
+  requirements:
+  - decorationInfo: {fileID: 11400000, guid: 8a4ae51d88b87db408184cae90ba7853, type: 2}
+    amount: 3
+    requirement: 2
+  - decorationInfo: {fileID: 11400000, guid: 8a4ae51d88b87db408184cae90ba7853, type: 2}
+    amount: 3
+    requirement: 2
 --- !u!64 &1341168804
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -9935,6 +9946,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   meshCollider: {fileID: 1770290162}
+  requirements: []
 --- !u!64 &1770290162
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -10565,6 +10577,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   meshCollider: {fileID: 1850868431}
+  requirements: []
 --- !u!64 &1850868431
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -11087,6 +11100,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   meshCollider: {fileID: 2012213431}
+  requirements: []
 --- !u!64 &2012213431
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -11213,6 +11227,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   meshCollider: {fileID: 2029497385}
+  requirements: []
 --- !u!64 &2029497385
 MeshCollider:
   m_ObjectHideFlags: 0

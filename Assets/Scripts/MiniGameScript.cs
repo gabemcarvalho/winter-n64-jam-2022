@@ -15,7 +15,7 @@ public class MiniGameScript : MonoBehaviour
     
     [SerializeField] Transform tree;
 
-
+    [SerializeField] Decoratable decoratble;
    
     [SerializeField]PlayerController player;
 
@@ -24,15 +24,15 @@ public class MiniGameScript : MonoBehaviour
     // a controling variable to start the mini game or exit it 
     bool startMinigame = false;
     
-    private Vector3 treeOldPosition;
+    public Vector3 treeOldPosition;
     Vector3 cameraOldPosition;
     private float rotationSpeed = 30f;
     bool aiming;
 
 
     
-    private List<GameObject> decorationtiles;
-    private int DecorationIndex;
+
+    
 
  
     [SerializeField]Transform bucket;
@@ -54,14 +54,7 @@ public class MiniGameScript : MonoBehaviour
    
 
         
-        DecorationIndex = 0;
-        decorationtiles = new List<GameObject>();
-        foreach (DecorationInfo info in player.availableDecorations)
-        {
-            GameObject decorationPrefab = Resources.Load(info.projectileResource) as GameObject;
-            decorationtiles.Add(decorationPrefab);
-        }
-        UIActions.EventActiveDecorationChanged?.Invoke(player.availableDecorations[DecorationIndex]);
+       
 
 
 
@@ -111,8 +104,8 @@ public class MiniGameScript : MonoBehaviour
             }
             if (Input.GetKeyDown(KeyCode.E))
             {
-                DecorationIndex = (DecorationIndex + 1) % player.availableDecorations.Count;
-                UIActions.EventActiveDecorationChanged?.Invoke(player.availableDecorations[DecorationIndex]);
+                player.activeDecorationIndex = (player.activeDecorationIndex + 1) % player.availableDecorations.Count;
+                UIActions.EventActiveDecorationChanged?.Invoke(player.availableDecorations[player.activeDecorationIndex]);
             }
             if (startMinigame && aiming && Input.GetMouseButtonDown(0))
             {
@@ -166,7 +159,8 @@ public class MiniGameScript : MonoBehaviour
         PlayerController.EventSetCanMove?.Invoke(false);
         bucket.gameObject.SetActive(true);
         treeOldPosition = tree.position;
-        tree.position = new Vector3(1000, 0, 0);
+       
+        decoratble.Move(new Vector3(1000,0,0));
 
         CameraController.EventEnableMiniGame?.Invoke(tree);
 
@@ -187,8 +181,8 @@ public class MiniGameScript : MonoBehaviour
         PlayerController.EventSetCanMove?.Invoke(true);
         bucket.gameObject.SetActive(false);
         player.OnFellInLake();
-        
-        tree.transform.position = treeOldPosition;
+
+        decoratble.Move(treeOldPosition);
 
         CameraController.EventDisableMiniGame?.Invoke();
        
@@ -210,7 +204,7 @@ public class MiniGameScript : MonoBehaviour
         Vector3 aim = mainCamera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, 5.0f));
         Vector3 mouseDirection = aim - mainCamera.transform.position;
 
-        GameObject snowball = Instantiate(decorationtiles[DecorationIndex], bucket.position + bucket.forward * 0.3f, Quaternion.identity);
+        GameObject snowball = Instantiate(player.decorationProjectiles[player.activeDecorationIndex], bucket.position + bucket.forward * 0.3f, Quaternion.identity);
         snowball.transform.LookAt(aim);
         Rigidbody b = snowball.GetComponent<Rigidbody>();
         b.AddForce(mouseDirection.normalized * 500f);

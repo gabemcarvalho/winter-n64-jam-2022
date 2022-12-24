@@ -24,8 +24,8 @@ public class PlayerController : MonoBehaviour
     public float slopeSlowDownCoefficient = 1f;
 
     public List<DecorationInfo> availableDecorations;
-    private List<GameObject> decorationProjectiles;
-    private int activeDecorationIndex;
+    [NonSerialized] public List<GameObject> decorationProjectiles;
+    [NonSerialized] public int activeDecorationIndex;
 
     public bool canMove;
 

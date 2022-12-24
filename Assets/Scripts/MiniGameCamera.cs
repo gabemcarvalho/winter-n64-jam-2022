@@ -8,6 +8,8 @@ public class MiniGameCamera : MonoBehaviour
 
     public static Action<bool> EventRotateAroundTree;
 
+
+
     Camera miniGameCam;
     Transform treePos;
     [SerializeField] float distance = 10f;
