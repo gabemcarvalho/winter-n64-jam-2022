@@ -383,6 +383,7 @@ public class PlayerController : MonoBehaviour
 
     public void AddDecoration(DecorationInfo info)
     {
+        
         availableDecorations.Add(info);
         decorationProjectiles.Add(Resources.Load(info.projectileResource) as GameObject);
     }

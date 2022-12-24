@@ -14,15 +14,28 @@ public class Decoratable : MonoBehaviour
     private int decorationLayer;
     private int decoratableLayer;
 
+    //public List<DecorationInfo> decorations;
+    DecorationInfo decorationInfo;
+
+    bool deleteDecorations = false;
+    List<Decoration> decorations;
+    
+    //List<ContactPoint> contactlist;
+    
+
+    
+    private Vector3 stuckPosition;
+
     void Awake()
     {
         mesh = GetComponent<MeshFilter>().mesh;
-
+        
         colourList = (new Color32[mesh.vertexCount]).ToList();
         ResetVertexColours();
 
         decorationLayer = LayerMask.NameToLayer("Decoration");
         decoratableLayer = LayerMask.NameToLayer("Decoratable");
+        
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -31,21 +44,54 @@ public class Decoratable : MonoBehaviour
 
         ContactPoint contact = collision.GetContact(0);
         
-        // Cast a ray from the contact point in the direction of the collision normal
-        Ray ray = new Ray(contact.point - contact.normal * 0.01f, contact.normal);
-        RaycastHit hit;
-        if (meshCollider.Raycast(ray, out hit, Mathf.Infinity))
+
+        if (collision.gameObject.tag != "SnowBall")
         {
-            // Check if the raycast hit a triangle
-            if (hit.triangleIndex >= 0)
-            {
-                Debug.Log($"Triangle {hit.triangleIndex} hit!");
+            Decoration deco = collision.gameObject.GetComponent<Decoration>();
+            Rigidbody rb = collision.gameObject.GetComponent<Rigidbody>();
+            deco.stuck = true;
+       
+            stuckPosition = collision.gameObject.transform.position;
+            //rb.constraints = RigidbodyConstraints.FreezeAll;
+            rb.detectCollisions = false;
+            //rb.transform.position = contact.point - contact.normal * 0.2f;
+            Destroy(rb);
 
-                ColourTriangle(hit.triangleIndex, new Color32(255, 255, 255, 255));
-            }
+            collision.transform.position = contact.point - contact.normal * 0.2f;
+            Debug.Log(deco);
+            decorations.Add(deco);
+            
+
+            //rb.transform.localScale *= 2;
+          
+
+
         }
+        else {
 
-        Destroy(collision.gameObject);
+            Ray ray = new Ray(contact.point - contact.normal * 0.01f, contact.normal);
+            RaycastHit hit;
+            if (meshCollider.Raycast(ray, out hit, Mathf.Infinity))
+            {
+                // Check if the raycast hit a triangle
+                if (hit.triangleIndex >= 0)
+                {
+
+
+                    ColourTriangle(hit.triangleIndex, new Color32(255, 255, 255, 255));
+
+
+
+                    Debug.Log($"Triangle {hit.triangleIndex} hit!");
+
+                }
+            }
+            
+            Destroy(collision.gameObject);
+        }
+        
+        //stuckedDecorations[collision.gameObject.name] += 1;
+       
     }
 
     public void ResetVertexColours()
@@ -81,4 +127,5 @@ public class Decoratable : MonoBehaviour
         mesh.colors32 = colourList.ToArray(); // doesn't work??
         GetComponent<MeshFilter>().mesh = mesh;
     }
+    
 }

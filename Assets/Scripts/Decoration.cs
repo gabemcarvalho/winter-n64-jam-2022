@@ -2,24 +2,34 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Snowball : MonoBehaviour
+public class Decoration : MonoBehaviour
 {
     [SerializeField] public float lifetime = 5.0f;
 
-    private Rigidbody rigidbody;
+    [SerializeField] DecorationInfo decorationReference;
+
+    public bool stuck; 
 
     void Start()
     {
-        rigidbody = GetComponent<Rigidbody>();
+        stuck = false;
     }
 
-    
+
     void Update()
     {
-        life();
+
+
+        if (!stuck)
+        {
+            life();
+        }
+        
+        
     }
 
-    public void life() {
+    public void life()
+    {
         lifetime -= Time.deltaTime;
         if (lifetime <= 0)
         {

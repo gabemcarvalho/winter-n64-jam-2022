@@ -7,6 +7,8 @@ public class CameraController : MonoBehaviour
     public static Action EventDisableCutsceneCamera;
     public static Action EventEnableTitleCamera;
     public static Action EventDisableTitleCamera;
+    public static Action<Transform> EventEnableMiniGame;
+    public static Action EventDisableMiniGame;
 
     [SerializeField] Vector3 normalCameraOffset = new Vector3(0, 0.5f, 0);
     [SerializeField] float targetChangeLerp = 0.1f;
@@ -20,7 +22,7 @@ public class CameraController : MonoBehaviour
 
     private CutsceneCamera cutsceneCamera;
     private TitleScreenCamera titleScreenCamera;
-    MiniGameCamera miniGameCamera;
+    public MiniGameCamera miniGameCamera;
     public Vector3 cameraOffsetTarget;
 
     // Start is called before the first frame update
@@ -51,6 +53,9 @@ public class CameraController : MonoBehaviour
         EventDisableCutsceneCamera += DisableCutsceneCamera;
         EventEnableTitleCamera += EnableTitleCamera;
         EventDisableTitleCamera += DisableTitleCamera;
+        EventEnableMiniGame += EnableMiniGame;
+        EventDisableMiniGame += DisableMiniGame;
+        
     }
 
     void OnDestroy()
@@ -67,6 +72,8 @@ public class CameraController : MonoBehaviour
         EventDisableCutsceneCamera -= DisableCutsceneCamera;
         EventEnableTitleCamera -= EnableTitleCamera;
         EventDisableTitleCamera -= DisableTitleCamera;
+        EventEnableMiniGame -= EnableMiniGame;
+        EventDisableMiniGame -= DisableMiniGame;
     }
 
     private void Update()
@@ -137,17 +144,22 @@ public class CameraController : MonoBehaviour
         cameraController.enabled = true;
         titleScreenCamera.enabled = false;
     }
-    public void EnableMiniGame()
+    public void EnableMiniGame(Transform treeTransform)
     {
+        miniGameCamera.FixOnTree(treeTransform);
+        cameraInput.enabled = false;
         cameraController.enabled = false;
-        DisableCamera();
+        //DisableCamera();
         miniGameCamera.enabled = true;
+        
+      
 
     }
     public void DisableMiniGame()
     {
         cameraController.enabled = true;
-        EnableCamera();
+        cameraInput.enabled = true;
+        //EnableCamera();
         miniGameCamera.enabled = false;
 
     }

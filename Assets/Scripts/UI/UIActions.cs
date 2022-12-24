@@ -14,6 +14,8 @@ public class UIActions : MonoBehaviour
     public static Action EventHideCursor;
     public static Action<DecorationInfo> EventActiveDecorationChanged;
     public static Action EventStartGame;
+    
+
 
     [SerializeField] private GameObject gamePanel;
     [SerializeField] private GameObject mainMenuPanel;

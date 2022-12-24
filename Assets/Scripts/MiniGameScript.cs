@@ -12,35 +12,32 @@ public class MiniGameScript : MonoBehaviour
 {
     // camera componenet control
     [SerializeField] Camera mainCamera;
-    CameraController gameCameraScript;
-    // target game object
-    [SerializeField] Targetable target;
-    // to disable/enable the player or the gun
-    public GameObject player;
-    //public GameObject gun;
-    [SerializeField] GameObject tree;
-    private PlayerController playingCharacter = new PlayerController();
+    
+    [SerializeField] Transform tree;
+
+
+   
+    [SerializeField]PlayerController player;
 
     // ui elements such as : npc specific needs list, timer...
     public GameObject uiElements;
     // a controling variable to start the mini game or exit it 
     bool startMinigame = false;
-    Vector3 playerOldPosition;
+    
     private Vector3 treeOldPosition;
     Vector3 cameraOldPosition;
     private float rotationSpeed = 30f;
     bool aiming;
 
 
-    [SerializeField] public string snowballPrefabResource = "Decorations/Snowball";
-    public GameObject miniSnowballPrefab;
+    
     private List<GameObject> decorationtiles;
     private int DecorationIndex;
 
-    [SerializeField] string bucketResource = "Assets/Models/Bucket.fbx";
-    public GameObject bucketPrefab;
-    GameObject bucket;
-    Bucket bucketScript;
+ 
+    [SerializeField]Transform bucket;
+
+        
 
 
     public float xBuck;
@@ -48,22 +45,25 @@ public class MiniGameScript : MonoBehaviour
     public float zBuck;
 
 
-    private void Start()
-    {
-        gameCameraScript = mainCamera.gameObject.GetComponent<CameraController>();
-        playingCharacter = player.gameObject.GetComponent<PlayerController>();
-        bucketScript = bucketPrefab.GetComponent<Bucket>();
+    
 
-        miniSnowballPrefab = Resources.Load(snowballPrefabResource) as GameObject;
-        //UIActions.EventActiveDecorationChanged?.Invoke(playingCharacter.availableDecorations[playingCharacter.activeDecorationIndex]);
+
+    private void Awake()
+    {
+        
+   
+
+        
         DecorationIndex = 0;
         decorationtiles = new List<GameObject>();
-        foreach (DecorationInfo info in playingCharacter.availableDecorations)
+        foreach (DecorationInfo info in player.availableDecorations)
         {
             GameObject decorationPrefab = Resources.Load(info.projectileResource) as GameObject;
             decorationtiles.Add(decorationPrefab);
         }
-        UIActions.EventActiveDecorationChanged?.Invoke(playingCharacter.availableDecorations[DecorationIndex]);
+        UIActions.EventActiveDecorationChanged?.Invoke(player.availableDecorations[DecorationIndex]);
+
+
 
 
     }
@@ -101,14 +101,18 @@ public class MiniGameScript : MonoBehaviour
                 UIActions.EventLockCursor?.Invoke();
                 aiming = false;
             }
-            if (Input.GetKey(KeyCode.LeftArrow))
+            if (Input.GetKey(KeyCode.A))
             {
-                tree.transform.Rotate(0, -rotationSpeed * Time.deltaTime, 0);
+                MiniGameCamera.EventRotateAroundTree?.Invoke(false);
+            }
+            if (Input.GetKey(KeyCode.D))
+            {
+                MiniGameCamera.EventRotateAroundTree?.Invoke(true);
             }
             if (Input.GetKeyDown(KeyCode.E))
             {
-                DecorationIndex = (DecorationIndex + 1) % playingCharacter.availableDecorations.Count;
-                UIActions.EventActiveDecorationChanged?.Invoke(playingCharacter.availableDecorations[DecorationIndex]);
+                DecorationIndex = (DecorationIndex + 1) % player.availableDecorations.Count;
+                UIActions.EventActiveDecorationChanged?.Invoke(player.availableDecorations[DecorationIndex]);
             }
             if (startMinigame && aiming && Input.GetMouseButtonDown(0))
             {
@@ -127,14 +131,7 @@ public class MiniGameScript : MonoBehaviour
 
             }
         }
-        //else if (!startMinigame){
-        //    ExitMiniGame();
-        //    Debug.Log(player.transform.position);
-        //    startMinigame = false;
-        //    Debug.Log(startMinigame);
-        //    Debug.Log(player.transform.position);
-
-        //}
+       
 
 
     }
@@ -166,26 +163,13 @@ public class MiniGameScript : MonoBehaviour
     void EnterMiniGame()
     {
 
-        //this.GetComponent<BoxCollider>().enabled = false;
-        //uiElements.SetActive(true);
+        PlayerController.EventSetCanMove?.Invoke(false);
+        bucket.gameObject.SetActive(true);
+        treeOldPosition = tree.position;
+        tree.position = new Vector3(1000, 0, 0);
 
-        // storing old position of camera & player
+        CameraController.EventEnableMiniGame?.Invoke(tree);
 
-        //player.SetActive(false);
-        treeOldPosition = tree.transform.position;
-        tree.transform.position += new Vector3(1000, 0, 0);
-        gameCameraScript.EnableMiniGame();
-        
-        //bucket.transform.position = mainCamera.transform.position + new Vector3(xBuck, yBuck, zBuck);
-        //playingCharacter.bucketTransform.position = mainCamera.transform.position + new Vector3(0, 0, 0);
-
-        Vector3 targetPos = target.transform.position;
-        Vector3 lineOfSight = new Vector3(targetPos.x - 10, 0, targetPos.z - 10).normalized;
-
-        gameCameraScript.cameraOffsetTarget = new Vector3(1.0f, 0.7f, 0.3f * lineOfSight.magnitude);
-
-
-        // masking undesirable layers during the play 
         LayerCullingHide(mainCamera, 6);
         hide(mainCamera, "Ground");
         LayerCullingHide(mainCamera, 8);
@@ -199,12 +183,14 @@ public class MiniGameScript : MonoBehaviour
     }
     void ExitMiniGame()
     {
-        //player.SetActive(true);
+      
+        PlayerController.EventSetCanMove?.Invoke(true);
+        bucket.gameObject.SetActive(false);
+        player.OnFellInLake();
         
-        //miniGameCamera.lockOnTarget.followTarget = null;
-        playingCharacter.OnFellInLake();
-        gameCameraScript.DisableMiniGame();
         tree.transform.position = treeOldPosition;
+
+        CameraController.EventDisableMiniGame?.Invoke();
        
         LayerCullingShow(mainCamera, 6);
         show(mainCamera, "Ground");
@@ -213,51 +199,22 @@ public class MiniGameScript : MonoBehaviour
         show(mainCamera, "NPC");
         LayerCullingShow(mainCamera, 4);
         show(mainCamera, "Water");
-        //uiElements.SetActive(false);
+  
 
 
     }
     public void shootSnow()
     {
-        Vector2 mousePos = GetGameCameraMousePosition();
+        Vector2 mousePos = PlayerController.GetGameCameraMousePosition();
 
         Vector3 aim = mainCamera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, 5.0f));
         Vector3 mouseDirection = aim - mainCamera.transform.position;
 
-        GameObject snowball = Instantiate(decorationtiles[DecorationIndex], playingCharacter.bucketTransform.position, Quaternion.identity);
+        GameObject snowball = Instantiate(decorationtiles[DecorationIndex], bucket.position + bucket.forward * 0.3f, Quaternion.identity);
         snowball.transform.LookAt(aim);
         Rigidbody b = snowball.GetComponent<Rigidbody>();
         b.AddForce(mouseDirection.normalized * 500f);
     }
-    static Vector2 GetGameCameraMousePosition()
-    {
-        // transform screen coords into 320x240 coords
-        Vector3 mousePos = Input.mousePosition;
-        Vector2 screen = new Vector2(Screen.width, Screen.height);
-        float aspectRatio = screen.x / screen.y;
-        if (aspectRatio > 4.0f / 3.0f) // wider resolution
-        {
-            float ratio = screen.y / 240.0f;
-            float edge = 160.0f * ratio;
-            float offset = screen.x / 2.0f - edge;
-            mousePos.x = Math.Clamp(mousePos.x, screen.x * 0.5f - edge, screen.x * 0.5f + edge) - offset;
-
-            mousePos.x /= ratio;
-            mousePos.y /= ratio;
-        }
-        else // taller resolution (why???)
-        {
-            float ratio = screen.x / 320.0f;
-            float edge = 120.0f * ratio;
-            float offset = screen.y / 2.0f - edge;
-
-            mousePos.y = Math.Clamp(mousePos.y, screen.y * 0.5f - edge, screen.y * 0.5f + edge) - offset;
-
-            mousePos.x /= ratio;
-            mousePos.y /= ratio;
-        }
-
-        return new Vector2(mousePos.x, mousePos.y);
-    }
+    
 }
 
