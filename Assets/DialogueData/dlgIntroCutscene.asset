@@ -32,7 +32,7 @@ MonoBehaviour:
     cameraEndPosition: {x: -18.3, y: 7.1, z: -14.64}
     duration: 6
     specialEvent: 
-  - text: But all the decorations got lost afte the storm last night!
+  - text: But all the decorations got lost after the storm last night!
     characterName: Mr. Bucket
     showTextbox: 1
     moveCamera: 0
