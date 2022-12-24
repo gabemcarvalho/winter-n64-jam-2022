@@ -6,6 +6,7 @@ using TMPro;
 public class CollectedText : MonoBehaviour
 {
     public static Action<int> EventUpdateNumCollected;
+    public static Action EventUpdateNumCollectibles;
 
     private TextMeshProUGUI tmpTextbox;
 
@@ -16,16 +17,18 @@ public class CollectedText : MonoBehaviour
         tmpTextbox = GetComponent<TextMeshProUGUI>();
 
         EventUpdateNumCollected += UpdateNumCollected;
-    }
-
-    void Start()
-    {
-        numCollectibles = FindObjectsOfType<Collectible>().Length;
+        EventUpdateNumCollectibles += UpdateNumCollectibles;
     }
 
     private void OnDestroy()
     {
         EventUpdateNumCollected -= UpdateNumCollected;
+        EventUpdateNumCollectibles -= UpdateNumCollectibles;
+    }
+
+    public void UpdateNumCollectibles()
+    {
+        numCollectibles = FindObjectsOfType<Collectible>().Length;
     }
 
     public void UpdateNumCollected(int collected)

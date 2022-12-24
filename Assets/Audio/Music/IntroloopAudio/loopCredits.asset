@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2cd7c3672a89964589361a843fb5884, type: 3}
   m_Name: loopCredits
   m_EditorClassIdentifier: 
-  volume: 1
+  volume: 0.8
   pitch: 1
   audioClip: {fileID: 8300000, guid: 9b7ac9965c39afe4eb5042e2c5ec3954, type: 3}
   introBoundary: 7.164

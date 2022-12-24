@@ -170,6 +170,8 @@ public class UIActions : MonoBehaviour
         TransitionPanel.EventStartTransition?.Invoke(0.8f);
         AudioManager.GetInstance().StopMusic(3.0f);
         EventUpdateDecoratedPercent?.Invoke(0.0f);
+        CollectedText.EventUpdateNumCollectibles?.Invoke(); // a hack since these didn't work in Start()
+        CollectedText.EventUpdateNumCollected?.Invoke(1);
     }
 
     public void PlayIntroDialog()
