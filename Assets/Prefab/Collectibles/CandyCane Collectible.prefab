@@ -1,5 +1,37 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3047725876703764449
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4661353452296065193}
+  m_Layer: 11
+  m_Name: mesh parent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4661353452296065193
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3047725876703764449}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 8090425402706277890}
+  m_Father: {fileID: 8632360849437852472}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8632360849437852468
 GameObject:
   m_ObjectHideFlags: 0
@@ -31,7 +63,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 8090425402706277890}
+  - {fileID: 4661353452296065193}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -47,7 +79,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6506b75442cb66c40aaddd3b26cb57b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  indicatorTransform: {fileID: 8090425402706277890}
+  indicatorTransform: {fileID: 4661353452296065193}
   bobPeriod: 2
   bobAmplitude: 0.2
   rotationSpeed: 50
@@ -83,7 +115,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 8632360849437852472}
+    m_TransformParent: {fileID: 4661353452296065193}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: fed0fbcd218e9c54a8ac09dbe4f63c74, type: 3}
       propertyPath: m_RootOrder
@@ -107,7 +139,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: fed0fbcd218e9c54a8ac09dbe4f63c74, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.45
+      value: -0.4499998
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: fed0fbcd218e9c54a8ac09dbe4f63c74, type: 3}
       propertyPath: m_LocalPosition.z

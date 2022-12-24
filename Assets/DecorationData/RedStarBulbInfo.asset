@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: RedStarBulbInfo
   m_EditorClassIdentifier: 
   displayName: Red Star Bulb
-  uiIcon: {fileID: 21300000, guid: 881798b77426a8f47b533dcc4767e9e5, type: 3}
+  uiIcon: {fileID: 21300000, guid: 602181dfc808d0549ac67291a3df467b, type: 3}
   projectileResource: Decorations/RedStarBulb

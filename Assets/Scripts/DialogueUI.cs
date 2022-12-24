@@ -52,8 +52,10 @@ public class DialogueUI : MonoBehaviour
             {
                 if (textBlock.specialEvent == "StartGame")
                 {
-                    // play music
+                    AudioManager.GetInstance().ResumeOverworldMusic(0.0f);
                 }
+
+                continue;
             }
 
             if (dialogueObject.Mode == DialogueObject.CameraMode.Cutscene && textBlock.moveCamera)

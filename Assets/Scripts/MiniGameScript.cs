@@ -1,77 +1,36 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Net.Sockets;
-using ThirdPersonCamera;
 using UnityEngine;
-using static UnityEngine.UI.ContentSizeFitter;
-using Debug = UnityEngine.Debug;
+using System;
+using System.Linq;
 
 public class MiniGameScript : MonoBehaviour
 {
+    [SerializeField] public E7.Introloop.IntroloopAudio musicLoop;
+
     // camera componenet control
     [SerializeField] Camera mainCamera;
-    
     [SerializeField] Transform tree;
-
-    [SerializeField] Decoratable decoratble;
-   
+    [SerializeField] Decoratable decoratable;
     [SerializeField]PlayerController player;
 
-    // ui elements such as : npc specific needs list, timer...
-    public GameObject uiElements;
     // a controling variable to start the mini game or exit it 
-    bool startMinigame = false;
-    
-    public Vector3 treeOldPosition;
-    Vector3 cameraOldPosition;
-    private float rotationSpeed = 30f;
-    bool aiming;
+    bool inMinigame = false;
 
-
-    
-
-    
-
+    private float oldCameraFoV;
+    private Vector3 treeOldPosition;
  
     [SerializeField]Transform bucket;
-
-        
-
-
-    public float xBuck;
-    public float yBuck;
-    public float zBuck;
-
-
-    
-
 
     private void Awake()
     {
         
-   
-
-        
-       
-
-
-
-
     }
+
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Player" && !startMinigame)
+        if (other.gameObject.tag == "Player" && !inMinigame)
         {
-
-            startMinigame = true;
-            //bucket = Instantiate(bucketPrefab);
-            //bucket.gameObject.GetComponent<Bucket>().enabled = false;
+            inMinigame = true;
             EnterMiniGame();
-
-            Debug.Log(startMinigame);
-
         }
     }
 
@@ -79,57 +38,37 @@ public class MiniGameScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (startMinigame)
+        if (!inMinigame) return;
+
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-
-
-
-            if (Input.GetKeyDown(KeyCode.LeftShift))
-            {
-                UIActions.EventUnlockCursor?.Invoke();
-                aiming = true;
-            }
-            else if (Input.GetKeyUp(KeyCode.LeftShift))
-            {
-                UIActions.EventLockCursor?.Invoke();
-                aiming = false;
-            }
-            if (Input.GetKey(KeyCode.A))
-            {
-                MiniGameCamera.EventRotateAroundTree?.Invoke(false);
-            }
-            if (Input.GetKey(KeyCode.D))
-            {
-                MiniGameCamera.EventRotateAroundTree?.Invoke(true);
-            }
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                player.activeDecorationIndex = (player.activeDecorationIndex + 1) % player.availableDecorations.Count;
-                UIActions.EventActiveDecorationChanged?.Invoke(player.availableDecorations[player.activeDecorationIndex]);
-            }
-            if (startMinigame && aiming && Input.GetMouseButtonDown(0))
-            {
-
-                shootSnow();
-
-            }
-
-            if (Input.GetKeyDown(KeyCode.C))
-            {
-                //this.gameObject.layer = 12;
-                //Destroy(bucket);
-                ExitMiniGame();
-                startMinigame = false;
-
-
-            }
+            UIActions.EventPauseGame?.Invoke();
+            inMinigame = false;
+            return;
         }
-       
-
-
+        if (Input.GetKey(KeyCode.A))
+        {
+            MiniGameCamera.EventRotateAroundTree?.Invoke(false);
+        }
+        if (Input.GetKey(KeyCode.D))
+        {
+            MiniGameCamera.EventRotateAroundTree?.Invoke(true);
+        }
+        if (Input.GetKeyDown(KeyCode.E) || Input.GetMouseButtonDown(1))
+        {
+            player.activeDecorationIndex = (player.activeDecorationIndex + 1) % player.availableDecorations.Count;
+            UIActions.EventActiveDecorationChanged?.Invoke(player.availableDecorations[player.activeDecorationIndex]);
+        }
+        if (Input.GetMouseButtonDown(0))
+        {
+            ShootDecoration();
+        }
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            ExitMiniGame();
+            inMinigame = false;
+        }
     }
-
-
 
     void LayerCullingShow(Camera cam, int layerMask)
     {
@@ -140,29 +79,29 @@ public class MiniGameScript : MonoBehaviour
     {
         LayerCullingShow(cam, 1 << LayerMask.NameToLayer(layer));
     }
+
     void LayerCullingHide(Camera cam, int layerMask)
     {
         cam.cullingMask &= ~layerMask;
     }
+
     void hide(Camera cam, string layer)
     {
         LayerCullingHide(cam, 1 << LayerMask.NameToLayer(layer));
     }
 
-
-
-
-
     void EnterMiniGame()
     {
-
         PlayerController.EventSetCanMove?.Invoke(false);
         bucket.gameObject.SetActive(true);
         treeOldPosition = tree.position;
        
-        decoratble.Move(new Vector3(1000,0,0));
+        decoratable.Move(new Vector3(1000,0,0));
+        decoratable.GetComponent<MeshCollider>().enabled = true;
 
         CameraController.EventEnableMiniGame?.Invoke(tree);
+        
+        UIActions.EventUnlockCursor?.Invoke();
 
         LayerCullingHide(mainCamera, 6);
         hide(mainCamera, "Ground");
@@ -171,33 +110,48 @@ public class MiniGameScript : MonoBehaviour
         LayerCullingHide(mainCamera, 4);
         hide(mainCamera, "Water");
 
+        oldCameraFoV = mainCamera.fieldOfView;
+        mainCamera.fieldOfView = 20.0f;
 
-        Debug.Log("trigger enter");
+        AudioManager.GetInstance().StopOverworldMusic();
+        AudioManager.GetInstance().PlayMusic(musicLoop);
 
+        UIActions.EventShowMinigameUI?.Invoke();
+        UIActions.EventResumeGame += ResumeMinigame;
     }
+
     void ExitMiniGame()
     {
-      
         PlayerController.EventSetCanMove?.Invoke(true);
         bucket.gameObject.SetActive(false);
         player.OnFellInLake();
 
-        decoratble.Move(treeOldPosition);
+        decoratable.Move(treeOldPosition);
+        decoratable.GetComponent<MeshCollider>().enabled = false;
 
+        UIActions.EventLockCursor?.Invoke();
         CameraController.EventDisableMiniGame?.Invoke();
        
         LayerCullingShow(mainCamera, 6);
         show(mainCamera, "Ground");
-        
         LayerCullingShow(mainCamera, 8);
         show(mainCamera, "NPC");
         LayerCullingShow(mainCamera, 4);
         show(mainCamera, "Water");
-  
 
+        mainCamera.fieldOfView = oldCameraFoV;
 
+        AudioManager.GetInstance().StopMusic(0.0f);
+        AudioManager.GetInstance().ResumeOverworldMusic(3.0f);
+
+        UIActions.EventHideMinigameUI?.Invoke();
+        UIActions.EventResumeGame -= ResumeMinigame;
+
+        var decoratables = FindObjectsOfType<Decoratable>();
+        UIActions.EventUpdateDecoratedPercent?.Invoke((float)decoratables.Where(x => x.completed).Count() / decoratables.Length);
     }
-    public void shootSnow()
+
+    public void ShootDecoration()
     {
         Vector2 mousePos = PlayerController.GetGameCameraMousePosition();
 
@@ -208,6 +162,12 @@ public class MiniGameScript : MonoBehaviour
         snowball.transform.LookAt(aim);
         Rigidbody b = snowball.GetComponent<Rigidbody>();
         b.AddForce(mouseDirection.normalized * 500f);
+    }
+
+    public void ResumeMinigame()
+    {
+        inMinigame = true;
+        UIActions.EventUnlockCursor?.Invoke();
     }
     
 }

@@ -14,29 +14,35 @@ public class UIActions : MonoBehaviour
     public static Action EventHideCursor;
     public static Action<DecorationInfo> EventActiveDecorationChanged;
     public static Action EventStartGame;
-    
-
+    public static Action EventShowMinigameUI;
+    public static Action EventHideMinigameUI;
+    public static Action<float> EventUpdateDecoratedPercent;
 
     [SerializeField] private GameObject gamePanel;
     [SerializeField] private GameObject mainMenuPanel;
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject pausePanel;
+    [SerializeField] private GameObject minigamePanel;
 
     [SerializeField] private DialogueObject introDialog;
 
     private GameObject activePanel;
     private GameObject preSettingsPanel;
+    private GameObject prePausePanel;
 
     void Awake()
     {
         EventPauseGame += ShowPauseMenu;
         EventResumeGame += ClosePauseMenu;
         EventStartGame += StartGame;
+        EventShowMinigameUI += ShowMinigameUI;
+        EventHideMinigameUI += HideMinigameUI;
     }
 
     private void Start()
     {
         EventStartGame?.Invoke();
+        EventUpdateDecoratedPercent?.Invoke(0.0f);
     }
 
     void OnDestroy()
@@ -44,6 +50,8 @@ public class UIActions : MonoBehaviour
         EventPauseGame -= ShowPauseMenu;
         EventResumeGame -= ClosePauseMenu;
         EventStartGame -= StartGame;
+        EventShowMinigameUI -= ShowMinigameUI;
+        EventHideMinigameUI -= HideMinigameUI;
     }
 
     public void QuitApplication()
@@ -78,6 +86,7 @@ public class UIActions : MonoBehaviour
     {
         activePanel.SetActive(false);
         pausePanel.SetActive(true);
+        prePausePanel = activePanel;
         activePanel = pausePanel;
         Time.timeScale = 0.0f;
     }
@@ -85,9 +94,23 @@ public class UIActions : MonoBehaviour
     public void ClosePauseMenu()
     {
         pausePanel.SetActive(false);
-        activePanel = gamePanel;
+        activePanel = prePausePanel ? prePausePanel : gamePanel;
         activePanel.SetActive(true);
         Time.timeScale = 1.0f;
+    }
+    
+    public void ShowMinigameUI()
+    {
+        activePanel.SetActive(false);
+        minigamePanel.SetActive(true);
+        activePanel = minigamePanel;
+    }
+
+    public void HideMinigameUI()
+    {
+        minigamePanel.SetActive(false);
+        activePanel = gamePanel;
+        activePanel.SetActive(true);
     }
 
     public void InvokeResumeGame()
@@ -107,6 +130,7 @@ public class UIActions : MonoBehaviour
         gamePanel.SetActive(false);
         settingsPanel.SetActive(false);
         pausePanel.SetActive(false);
+        minigamePanel.SetActive(false);
 
         CameraController.EventEnableTitleCamera?.Invoke();
     }
@@ -116,6 +140,7 @@ public class UIActions : MonoBehaviour
         EventHideCursor?.Invoke();
         TransitionPanel.EventTransitionEnded += PlayIntroDialog;
         TransitionPanel.EventStartTransition?.Invoke(0.8f);
+        AudioManager.GetInstance().StopMusic(3.0f);
     }
 
     public void PlayIntroDialog()

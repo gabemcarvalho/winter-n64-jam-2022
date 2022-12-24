@@ -19,15 +19,6 @@ public class Lake : MonoBehaviour
         icePrefab = Resources.Load(icePrefabResource) as GameObject;
     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.layer == decorationLayer)
-        {
-            Instantiate(icePrefab, collision.transform.position, Quaternion.identity);
-            Destroy(collision.gameObject);
-        }
-    }
-
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.layer == playerLayer)
@@ -38,9 +29,13 @@ public class Lake : MonoBehaviour
 
         if (other.gameObject.layer == decorationLayer)
         {
-            Vector3 icePosition = other.transform.position;
-            icePosition.y = transform.position.y + 0.18f;
-            Instantiate(icePrefab, icePosition, Quaternion.identity);
+            if (other.gameObject.tag == "SnowBall")
+            {
+                Vector3 icePosition = other.transform.position;
+                icePosition.y = transform.position.y + 0.18f;
+                Instantiate(icePrefab, icePosition, Quaternion.identity);
+            }
+            
             Destroy(other.gameObject);
         }
     }

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6559561335745498835}
   - component: {fileID: 6559561335745498834}
   - component: {fileID: 4187915083240425784}
-  - component: {fileID: 5970055566914673886}
+  - component: {fileID: -3107345309354940169}
   m_Layer: 10
   m_Name: CandyCane
   m_TagString: Untagged
@@ -64,7 +64,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 1
---- !u!114 &5970055566914673886
+--- !u!114 &-3107345309354940169
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -73,10 +73,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 6559561335745498837}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f21ccc3dd1e7d594db992feca6f398b9, type: 3}
+  m_Script: {fileID: 11500000, guid: ae0cbc5d474a24c2fbf7b5cfda7baca0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   lifetime: 5
+  decorationReference: {fileID: 11400000, guid: f767a1c3366eeda4288510a7aac4efd4, type: 2}
+  stuck: 0
 --- !u!1 &7118616282632721846
 GameObject:
   m_ObjectHideFlags: 0

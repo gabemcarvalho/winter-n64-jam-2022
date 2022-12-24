@@ -3,32 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Unity.Collections;
+using System;
 
 public class Decoratable : MonoBehaviour
 {
     public MeshCollider meshCollider;
 
+    [SerializeField] private float decorationDistance = 0.1f;
+
     private Mesh mesh;
     List<Color32> colourList;
 
     private int decorationLayer;
-    private int decoratableLayer;
 
-    //public List<DecorationInfo> decorations;
-    DecorationInfo decorationInfo;
-
-    bool deleteDecorations = false;
     List<Decoration> decorations;
-    
-    //List<ContactPoint> contactlist;
-
 
     public RequirementBlock[] requirements;
-
-    
-
-    
-    private Vector3 stuckPosition;
+    [NonSerialized] public bool completed;
 
     void Awake()
     {
@@ -38,10 +29,10 @@ public class Decoratable : MonoBehaviour
         ResetVertexColours();
 
         decorationLayer = LayerMask.NameToLayer("Decoration");
-        decoratableLayer = LayerMask.NameToLayer("Decoratable");
 
         decorations = new List<Decoration>();
-        
+
+        completed = false;
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -49,30 +40,17 @@ public class Decoratable : MonoBehaviour
         if (collision.gameObject.layer != decorationLayer) return;
 
         ContactPoint contact = collision.GetContact(0);
-        
 
         if (collision.gameObject.tag != "SnowBall")
         {
             Decoration deco = collision.gameObject.GetComponent<Decoration>();
-            Rigidbody rb = collision.gameObject.GetComponent<Rigidbody>();
+            Rigidbody rigidbody = collision.gameObject.GetComponent<Rigidbody>();
             deco.stuck = true;
-       
-            stuckPosition = collision.gameObject.transform.position;
-            //rb.constraints = RigidbodyConstraints.FreezeAll;
-            rb.detectCollisions = false;
-            //rb.transform.position = contact.point - contact.normal * 0.2f;
-            Destroy(rb);
+            rigidbody.detectCollisions = false;
+            Destroy(rigidbody);
 
-            collision.transform.position = contact.point - contact.normal * 0.2f;
-            Debug.Log(deco);
+            collision.transform.position = contact.point - contact.normal * decorationDistance;
             decorations.Add(deco);
-           
-            
-
-            //rb.transform.localScale *= 2;
-          
-
-
         }
         else {
 
@@ -83,31 +61,19 @@ public class Decoratable : MonoBehaviour
                 // Check if the raycast hit a triangle
                 if (hit.triangleIndex >= 0)
                 {
-
-
                     ColourTriangle(hit.triangleIndex, new Color32(255, 255, 255, 255));
-
-
-
-                    Debug.Log($"Triangle {hit.triangleIndex} hit!");
-                    
-
                 }
             }
             
             Destroy(collision.gameObject);
         }
 
-        //stuckedDecorations[collision.gameObject.name] += 1;
-
-
-        Debug.Log(CheckRequirement());
-
+        completed = CheckRequirement();
     }
 
     public void ResetVertexColours()
     {
-        Color32 transparent = new Color32(255, 0, 0, 0);// new Color32(0, 0, 0, 0);
+        Color32 transparent = new Color32(0, 0, 0, 0);
         for (int i = 0; i < colourList.Count; i++)
         {
             colourList[i] = transparent;
@@ -121,7 +87,7 @@ public class Decoratable : MonoBehaviour
         Color32 triColour = new Color32(0, 0, 0, 0);
         for (int i = 0; i < colourList.Count; i++)
         {
-            if (i % 3 == 0) triColour = new Color32((byte)Random.Range(0.0f, 255.0f), (byte)Random.Range(0.0f, 255.0f), (byte)Random.Range(0.0f, 255.0f), (byte)Random.Range(0.0f, 255.0f));
+            if (i % 3 == 0) triColour = new Color32((byte)UnityEngine.Random.Range(0.0f, 255.0f), (byte)UnityEngine.Random.Range(0.0f, 255.0f), (byte)UnityEngine.Random.Range(0.0f, 255.0f), (byte)UnityEngine.Random.Range(0.0f, 255.0f));
 
             colourList[i] = triColour;
         }
@@ -135,7 +101,7 @@ public class Decoratable : MonoBehaviour
         colourList[triIndex * 3 + 1] = col;
         colourList[triIndex * 3 + 2] = col;
 
-        mesh.colors32 = colourList.ToArray(); // doesn't work??
+        mesh.colors32 = colourList.ToArray();
         GetComponent<MeshFilter>().mesh = mesh;
     }
 
@@ -152,15 +118,12 @@ public class Decoratable : MonoBehaviour
     public bool CheckRequirement() {
 
         Dictionary<string, int> amounts = new Dictionary<string, int>();
-
-        
         
         foreach (Decoration decoration in decorations)
         {
             string key = decoration.decorationReference.displayName;
             if (amounts.ContainsKey(key))
             {
-
                 amounts[key] = amounts[key] + 1;
             }
             else {
@@ -191,7 +154,6 @@ public class Decoratable : MonoBehaviour
                 if (amounts[requirementBlock.decorationInfo.displayName] != requirementBlock.amount) return false;
                 continue;
             }
-
         }
 
         

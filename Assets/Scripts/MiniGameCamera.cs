@@ -5,27 +5,21 @@ using System;
 
 public class MiniGameCamera : MonoBehaviour
 {
-
     public static Action<bool> EventRotateAroundTree;
-
-
 
     Camera miniGameCam;
     Transform treePos;
     [SerializeField] float distance = 10f;
+    [SerializeField] float yoffset = 2.0f;
 
     private float angle = 0;
     [SerializeField] float speed;
     
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        
         miniGameCam = GetComponent<Camera>();
 
         EventRotateAroundTree += RotateAroundTree;
-        
-        
     }
 
     private void OnDestroy()
@@ -37,34 +31,36 @@ public class MiniGameCamera : MonoBehaviour
     {
         if (treePos == null) return; 
         
-        miniGameCam.transform.LookAt(treePos.position +  Vector3.up);
-        
+        miniGameCam.transform.LookAt(treePos.position + Vector3.up * yoffset * treePos.localScale.y);
     }
 
-    public void FixOnTree(Transform treetransform) {
+    private void UpdatePosition()
+    {
+        miniGameCam.transform.position = treePos.position + Vector3.up * yoffset * treePos.localScale.y + distance * treePos.localScale.y * new Vector3(Mathf.Sin(angle), 0f, Mathf.Cos(angle));
+    }
+
+    public void FixOnTree(Transform treetransform)
+    {
         miniGameCam = GetComponent<Camera>();
         treePos = treetransform;
-        Debug.Log(treePos + "tree pos");
-        Debug.Log(miniGameCam);
-        miniGameCam.transform.position = treePos.position + distance * new Vector3(Mathf.Sin(angle), 0f, Mathf.Cos(angle));
-
+        UpdatePosition();
     }
 
 
-    void RotateAroundTree(bool left) {
+    void RotateAroundTree(bool left)
+    {
         if (treePos == null) return;
 
         if (left)
         {
-
             angle += speed * Time.deltaTime;
         }
-        else {
+        else
+        {
             angle -= speed * Time.deltaTime;
         }
 
-        miniGameCam.transform.position = treePos.position + distance * new Vector3(Mathf.Sin(angle), 0f, Mathf.Cos(angle));
-
+        UpdatePosition();
     }
     
 }

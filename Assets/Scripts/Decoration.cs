@@ -5,12 +5,11 @@ using UnityEngine;
 public class Decoration : MonoBehaviour
 {
     [SerializeField] public float lifetime = 5.0f;
-
     [SerializeField] public DecorationInfo decorationReference;
 
     public bool stuck; 
 
-    void Start()
+    void Awake()
     {
         stuck = false;
     }
@@ -18,22 +17,13 @@ public class Decoration : MonoBehaviour
 
     void Update()
     {
-
-
         if (!stuck)
         {
-            life();
-        }
-        
-        
-    }
-
-    public void life()
-    {
-        lifetime -= Time.deltaTime;
-        if (lifetime <= 0)
-        {
-            Destroy(gameObject);
+            lifetime -= Time.deltaTime;
+            if (lifetime <= 0)
+            {
+                Destroy(gameObject);
+            }
         }
     }
 }

@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: BlueStripeBulbInfo
   m_EditorClassIdentifier: 
   displayName: Blue Striped Bulb
-  uiIcon: {fileID: 21300000, guid: 881798b77426a8f47b533dcc4767e9e5, type: 3}
+  uiIcon: {fileID: 21300000, guid: 35b3ed2382d81634c83c4c1abf04fcbe, type: 3}
   projectileResource: Decorations/BlueStripeBulb

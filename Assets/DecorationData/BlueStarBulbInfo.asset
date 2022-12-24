@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: BlueStarBulbInfo
   m_EditorClassIdentifier: 
   displayName: Blue Star Bulb
-  uiIcon: {fileID: 21300000, guid: 881798b77426a8f47b533dcc4767e9e5, type: 3}
+  uiIcon: {fileID: 21300000, guid: 101146f003addf94391ed69b367ff7ea, type: 3}
   projectileResource: Decorations/BlueStarBulb

@@ -32,9 +32,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float interactionDistance = 0.5f;
     private Interactable interactableFocus;
 
-    [SerializeField] string snowballPrefabResource = "Decorations/Snowball";
-    private GameObject snowballPrefab;
-
     private CharacterController characterController;
     private Animator animator;
 
@@ -60,8 +57,6 @@ public class PlayerController : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
 
-        snowballPrefab = Resources.Load(snowballPrefabResource) as GameObject;
-
         collectibleLayer = LayerMask.NameToLayer("Collectible");
         mudLayer = LayerMask.NameToLayer("Mud");
 
@@ -72,12 +67,17 @@ public class PlayerController : MonoBehaviour
             GameObject decorationPrefab = Resources.Load(info.projectileResource) as GameObject;
             decorationProjectiles.Add(decorationPrefab);
         }
-        UIActions.EventActiveDecorationChanged?.Invoke(availableDecorations[activeDecorationIndex]);
 
         mudTime = 0.0f;
 
         EventSetCanMove += SetCanMove;
         DialogueUI.EventResumePlayerControl += RemoveFocus;
+    }
+
+    private void Start()
+    {
+        UIActions.EventActiveDecorationChanged?.Invoke(availableDecorations[activeDecorationIndex]);
+        CollectedText.EventUpdateNumCollected?.Invoke(availableDecorations.Count);
     }
 
     private void OnDestroy()
@@ -108,7 +108,7 @@ public class PlayerController : MonoBehaviour
         {
             // Face interacting object
             animator.SetBool("isRunning", false);
-            animator.SetBool("isFlying", false);
+            animator.SetBool("isFalling", false);
             Vector3 interactDir = (interactableFocus.transform.position - transform.position).normalized;
             Quaternion lookRotation = Quaternion.LookRotation(new Vector3(interactDir.x, 0f, interactDir.z));
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5.0f);
@@ -129,15 +129,14 @@ public class PlayerController : MonoBehaviour
 
         if (aimMode && Input.GetMouseButtonDown(0))
         {
-            shootSnow();
+            ShootDecoration();
         }
 
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.E) || Input.GetMouseButtonDown(1))
         {
             activeDecorationIndex = (activeDecorationIndex + 1) % availableDecorations.Count;
             UIActions.EventActiveDecorationChanged?.Invoke(availableDecorations[activeDecorationIndex]);
         }
-        changeDecorationIndex();
 
         // ground check
         RaycastHit groundHit;
@@ -308,8 +307,9 @@ public class PlayerController : MonoBehaviour
     void SetFocus(Interactable newFocus)
     {
         animator.SetBool("isRunning", false);
-        animator.SetBool("isFlying", false);
+        animator.SetBool("isFalling", false);
         interactableFocus = newFocus;
+        interactableFocus.OnStartTalking(transform.position);
 
         var target = newFocus.GetComponentInParent<ThirdPersonCamera.Targetable>();
         UIActions.EventEnterTextboxCamera?.Invoke(target);
@@ -319,8 +319,13 @@ public class PlayerController : MonoBehaviour
     void RemoveFocus()
     {
         canMove = true;
-        interactableFocus = null;
         UIActions.EventExitTextboxCamera?.Invoke(true);
+
+        if (interactableFocus != null)
+        {
+            interactableFocus.OnStopTalking();
+            interactableFocus = null;
+        }
     }
 
     public static Vector2 GetGameCameraMousePosition()
@@ -383,9 +388,9 @@ public class PlayerController : MonoBehaviour
 
     public void AddDecoration(DecorationInfo info)
     {
-        
         availableDecorations.Add(info);
         decorationProjectiles.Add(Resources.Load(info.projectileResource) as GameObject);
+        CollectedText.EventUpdateNumCollected?.Invoke(availableDecorations.Count);
     }
 
     public void OnFellInLake()
@@ -396,7 +401,7 @@ public class PlayerController : MonoBehaviour
 
         verticalSpeed = 0;
     }
-    public void shootSnow()
+    public void ShootDecoration()
     {
         Vector2 mousePos = GetGameCameraMousePosition();
 
@@ -416,25 +421,7 @@ public class PlayerController : MonoBehaviour
         if (!canMove)
         {
             animator.SetBool("isRunning", false);
-            animator.SetBool("isFlying", false);
-        }
-    }
-    public void changeDecorationIndex() {
-
-        if (Input.GetKeyDown(KeyCode.G)) {
-            if (activeDecorationIndex >= decorationProjectiles.Count)
-            {
-                activeDecorationIndex = 0;
-                Debug.Log(activeDecorationIndex);
-                Debug.Log(decorationProjectiles[activeDecorationIndex]);
-            }
-            else {
-
-                activeDecorationIndex++;
-                Debug.Log(activeDecorationIndex);
-                Debug.Log(decorationProjectiles[activeDecorationIndex]);
-            }
-
+            animator.SetBool("isFalling", false);
         }
     }
 }

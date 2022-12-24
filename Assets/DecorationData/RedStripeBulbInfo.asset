@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: RedStripeBulbInfo
   m_EditorClassIdentifier: 
   displayName: Red Striped Bulb
-  uiIcon: {fileID: 21300000, guid: 881798b77426a8f47b533dcc4767e9e5, type: 3}
+  uiIcon: {fileID: 21300000, guid: 1cbbf06ea397f1f4a936eec76b98a9c4, type: 3}
   projectileResource: Decorations/RedStripeBulb

@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: RedPatternBulbInfo
   m_EditorClassIdentifier: 
   displayName: Red Pattern Bulb
-  uiIcon: {fileID: 21300000, guid: 881798b77426a8f47b533dcc4767e9e5, type: 3}
+  uiIcon: {fileID: 21300000, guid: 1948cc6b1253ba54aaa25589235fb57c, type: 3}
   projectileResource: Decorations/RedPatternBulb

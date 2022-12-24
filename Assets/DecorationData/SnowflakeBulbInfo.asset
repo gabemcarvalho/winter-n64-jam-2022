@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: SnowflakeBulbInfo
   m_EditorClassIdentifier: 
   displayName: Snowflake Bulb
-  uiIcon: {fileID: 21300000, guid: 881798b77426a8f47b533dcc4767e9e5, type: 3}
+  uiIcon: {fileID: 21300000, guid: b56880e7ad311e446ab85f12d8c31191, type: 3}
   projectileResource: Decorations/SnowflakeBulb

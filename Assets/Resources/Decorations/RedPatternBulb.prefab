@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5181909013079582929}
   - component: {fileID: 5775940649171973209}
   - component: {fileID: 5775940649171973208}
-  - component: {fileID: 5775940649171973207}
+  - component: {fileID: -3596192474743686770}
   m_Layer: 10
   m_Name: RedPatternBulb
   m_TagString: Untagged
@@ -115,7 +115,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 1
---- !u!114 &5775940649171973207
+--- !u!114 &-3596192474743686770
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -124,7 +124,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 6694929303335815428}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f21ccc3dd1e7d594db992feca6f398b9, type: 3}
+  m_Script: {fileID: 11500000, guid: ae0cbc5d474a24c2fbf7b5cfda7baca0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   lifetime: 5
+  decorationReference: {fileID: 11400000, guid: e7b6153272fb47e4bbdbdb738d470d3b, type: 2}
+  stuck: 0
