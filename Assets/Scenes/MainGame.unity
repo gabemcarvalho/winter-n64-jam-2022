@@ -2146,7 +2146,7 @@ MonoBehaviour:
     requirement: 0
   - decorationInfo: {fileID: 11400000, guid: f365c07c38503c0459099f9d20dd58be, type: 2}
     amount: 0
-    requirement: 2
+    requirement: 0
 --- !u!64 &342037691
 MeshCollider:
   m_ObjectHideFlags: 0

@@ -77,7 +77,7 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         UIActions.EventActiveDecorationChanged?.Invoke(availableDecorations[activeDecorationIndex]);
-        CollectedText.EventUpdateNumCollected?.Invoke(availableDecorations.Count);
+        CollectedText.EventUpdateNumCollected?.Invoke(availableDecorations.Count - 1);
     }
 
     private void OnDestroy()
@@ -392,7 +392,7 @@ public class PlayerController : MonoBehaviour
     {
         availableDecorations.Add(info);
         decorationProjectiles.Add(Resources.Load(info.projectileResource) as GameObject);
-        CollectedText.EventUpdateNumCollected?.Invoke(availableDecorations.Count);
+        CollectedText.EventUpdateNumCollected?.Invoke(availableDecorations.Count - 1);
     }
 
     public void OnFellInLake()

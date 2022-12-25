@@ -32,7 +32,7 @@ MonoBehaviour:
     cameraEndPosition: {x: -4, y: 18, z: 6.4}
     duration: 10
     specialEvent: 
-  - text: Everyone looked so happy!
+  - text: Everyone looks so happy!
     characterName: Mr. Bucket
     showTextbox: 1
     moveCamera: 0
