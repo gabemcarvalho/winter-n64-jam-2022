@@ -18,6 +18,8 @@ public class AudioManager : MonoBehaviour
     [SerializeField] public IntroloopAudio winStinger;
     [SerializeField] public IntroloopAudio creditsMusic;
 
+    private AudioSource defaultSource;
+
     public AudioManager GetSelf() => this;
 
     void Awake()
@@ -25,6 +27,7 @@ public class AudioManager : MonoBehaviour
         GetInstance = GetSelf;
 
         introloopPlayer = GetComponent<IntroloopPlayer>();
+        defaultSource = GetComponent<AudioSource>();
 
         soundDictionary = new Dictionary<string, Sound>();
 
@@ -34,6 +37,7 @@ public class AudioManager : MonoBehaviour
             sound.source.clip = sound.clip;
             sound.source.volume = sound.volume;
             sound.source.loop = sound.loop;
+            sound.source.outputAudioMixerGroup = defaultSource.outputAudioMixerGroup;
 
             soundDictionary.Add(sound.name, sound);
         }
