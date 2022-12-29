@@ -139,6 +139,7 @@ public class UIActions : MonoBehaviour
         minigamePanel.SetActive(false);
         activePanel = gamePanel;
         activePanel.SetActive(true);
+        MiniGameCamera.EventStopRotating?.Invoke(); // hack
     }
 
     public void InvokeResumeGame()

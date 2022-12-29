@@ -1,7 +1,0 @@
-- fix music on html5 build
-- fix aiming [done]
-- add arrows to minigame [done]
-- write clearer message for red tree [done]
-- add particle effects
-- fix 'decorated' bar at 100% [done]
-- fix NPC targeting [done]
