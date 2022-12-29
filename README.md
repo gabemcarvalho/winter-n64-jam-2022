@@ -5,13 +5,21 @@ A 3D collectathon made for the 2022 Winter N64 Style Graphics Jam! Made in colla
 Play this game on itch at [https://gabemcarvalho.itch.io/of-mice-and-merriment](https://gabemcarvalho.itch.io/of-mice-and-merriment)
 
 ## Controls
+
 Menu buttons, shoot decoration - Left-click
+
 Switch decoration - Right-click
+
 Move - WASD
+
 Look around - Move mouse
+
 Zoom in/out - Scroll Wheel
+
 Enter aim mode - Left Shift
+
 Jump - Space
+
 Turn tree (while decorating) - A and D
 
 ## Preview
