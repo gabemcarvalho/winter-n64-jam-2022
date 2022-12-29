@@ -116,6 +116,7 @@ public class UIActions : MonoBehaviour
         prePausePanel = activePanel;
         activePanel = pausePanel;
         Time.timeScale = 0.0f;
+        MiniGameCamera.EventStopRotating?.Invoke(); // hack
     }
 
     public void ClosePauseMenu()
@@ -222,5 +223,20 @@ public class UIActions : MonoBehaviour
     public void SetDecoratePromptEnabled(bool enabled)
     {
         decoratePrompt.SetActive(enabled);
+    }
+
+    public void RotateTreeLeft()
+    {
+        MiniGameCamera.EventStartRotating?.Invoke(false);
+    }
+
+    public void RotateTreeRight()
+    {
+        MiniGameCamera.EventStartRotating?.Invoke(true);
+    }
+
+    public void StopRotatingTree()
+    {
+        MiniGameCamera.EventStopRotating?.Invoke();
     }
 }

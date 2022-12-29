@@ -6,6 +6,8 @@ using System;
 public class MiniGameCamera : MonoBehaviour
 {
     public static Action<bool> EventRotateAroundTree;
+    public static Action<bool> EventStartRotating;
+    public static Action EventStopRotating;
 
     Camera miniGameCam;
     Transform treePos;
@@ -14,23 +16,37 @@ public class MiniGameCamera : MonoBehaviour
 
     private float angle = 0;
     [SerializeField] float speed;
+
+    private bool buttonRotating;
+    private bool buttonRotationDirection;
     
     void Awake()
     {
         miniGameCam = GetComponent<Camera>();
 
         EventRotateAroundTree += RotateAroundTree;
+        EventStartRotating += StartButtonRotating;
+        EventStopRotating += StopButtonRotating;
+
+        buttonRotating = false;
     }
 
     private void OnDestroy()
     {
         EventRotateAroundTree -= RotateAroundTree;
+        EventStartRotating -= StartButtonRotating;
+        EventStopRotating -= StopButtonRotating;
     }
 
     private void Update()
     {
         if (treePos == null) return; 
         
+        if (buttonRotating)
+        {
+            RotateAroundTree(buttonRotationDirection);
+        }
+
         miniGameCam.transform.LookAt(treePos.position + Vector3.up * yoffset * treePos.localScale.y);
     }
 
@@ -61,6 +77,17 @@ public class MiniGameCamera : MonoBehaviour
         }
 
         UpdatePosition();
+    }
+
+    public void StartButtonRotating(bool direction)
+    {
+        buttonRotating = true;
+        buttonRotationDirection = direction;
+    }
+
+    public void StopButtonRotating()
+    {
+        buttonRotating = false;
     }
     
 }

@@ -40,6 +40,7 @@ public class MiniGameScript : MonoBehaviour
             if (!player.canMove) return;
 
             canEnterMinigame = true;
+            player.canDecorate = true;
             UIActions.EventSetDecoratePromptEnabled?.Invoke(true);
         }
     }
@@ -49,6 +50,7 @@ public class MiniGameScript : MonoBehaviour
         if (other.gameObject.tag == "Player")
         {
             canEnterMinigame = false;
+            player.canDecorate = false;
             UIActions.EventSetDecoratePromptEnabled?.Invoke(false);
         }
     }
@@ -64,14 +66,6 @@ public class MiniGameScript : MonoBehaviour
                 inMinigame = false;
                 return;
             }
-            if (Input.GetKey(KeyCode.A))
-            {
-                MiniGameCamera.EventRotateAroundTree?.Invoke(false);
-            }
-            if (Input.GetKey(KeyCode.D))
-            {
-                MiniGameCamera.EventRotateAroundTree?.Invoke(true);
-            }
             if (Input.GetKeyDown(KeyCode.E) || Input.GetMouseButtonDown(1))
             {
                 player.activeDecorationIndex = (player.activeDecorationIndex + 1) % player.availableDecorations.Count;
@@ -79,7 +73,15 @@ public class MiniGameScript : MonoBehaviour
             }
             if (Input.GetMouseButtonDown(0))
             {
-                ShootDecoration();
+                PlayerController.ShootDecoration(mainCamera, player.decorationProjectiles[player.activeDecorationIndex], bucket.position + bucket.forward * 0.3f);
+            }
+            if (Input.GetKey(KeyCode.A))
+            {
+                MiniGameCamera.EventRotateAroundTree?.Invoke(false);
+            }
+            if (Input.GetKey(KeyCode.D))
+            {
+                MiniGameCamera.EventRotateAroundTree?.Invoke(true);
             }
             if (Input.GetKeyDown(KeyCode.C))
             {

@@ -28,8 +28,11 @@ public class PlayerController : MonoBehaviour
     [NonSerialized] public int activeDecorationIndex;
 
     public bool canMove;
+    public bool canDecorate;
 
     [SerializeField] private float interactionDistance = 0.5f;
+    [SerializeField] private float interactionRadius = 0.5f;
+    public LayerMask npcMask;
     private Interactable interactableFocus;
 
     private CharacterController characterController;
@@ -53,6 +56,7 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         canMove = true;
+        canDecorate = false;
 
         characterController = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
@@ -129,7 +133,7 @@ public class PlayerController : MonoBehaviour
 
         if (aimMode && Input.GetMouseButtonDown(0))
         {
-            ShootDecoration();
+            ShootDecoration(camera, decorationProjectiles[activeDecorationIndex], bucketTransform.position + bucketTransform.forward * 0.3f);
         }
 
         if (Input.GetKeyDown(KeyCode.E) || Input.GetMouseButtonDown(1))
@@ -225,34 +229,42 @@ public class PlayerController : MonoBehaviour
 
         //jumping / interacting
 
+        Interactable interactable = null;
         RaycastHit interactableHit;
-        bool interactableCastResult = Physics.Raycast(transform.position, transform.forward, out interactableHit, interactionDistance);
-        if (interactableCastResult == true)
+        bool interactableCastResult = Physics.SphereCast(transform.position, interactionRadius, transform.forward, out interactableHit, interactionDistance, npcMask);
+        if (interactableCastResult)
         {
-            Interactable interactable = interactableHit.collider.GetComponent<Interactable>();
-            if (interactable == null)
-            {
-                interactableCastResult = false;
-                interactIndicator.GetComponent<RotateAndBob>().ResetBobTime(); // this is a hack at best
-                interactIndicator.SetActive(false);
-            }
-            else
-            {
-                interactIndicator.transform.position = interactable.transform.position + Vector3.up * interactable.IndicatorHeight;
-                interactIndicator.SetActive(true);
-            }
+            interactable = interactableHit.collider.GetComponent<Interactable>();
         }
         else
         {
-            interactIndicator.GetComponent<RotateAndBob>().ResetBobTime();
+            Collider[] interactibleColliders = Physics.OverlapSphere(transform.position, interactionRadius, npcMask, QueryTriggerInteraction.Collide);
+            if (interactibleColliders.Length > 0)
+            {
+                interactable = interactibleColliders[0].GetComponent<Interactable>();
+            }
+        }
+
+        if (canDecorate)
+        {
+            interactable = null;
+        }
+        
+        if (interactable == null)
+        {
+            interactIndicator.GetComponent<RotateAndBob>().ResetBobTime(); // this is a hack at best
             interactIndicator.SetActive(false);
+        }
+        else
+        {
+            interactIndicator.transform.position = interactable.transform.position + Vector3.up * interactable.IndicatorHeight;
+            interactIndicator.SetActive(true);
         }
 
         if (isGrounded)
         {
-            if (interactableCastResult && (Input.GetButtonDown("Jump") || Input.GetMouseButtonDown(0)))
+            if (interactable != null && (Input.GetButtonDown("Jump") || Input.GetMouseButtonDown(0)))
             {
-                Interactable interactable = interactableHit.collider.GetComponent<Interactable>();
                 SetFocus(interactable);
                 interactIndicator.GetComponent<RotateAndBob>().ResetBobTime();
                 interactIndicator.SetActive(false);
@@ -405,14 +417,21 @@ public class PlayerController : MonoBehaviour
 
         AudioManager.GetInstance().PlaySound("Splash");
     }
-    public void ShootDecoration()
+    public static void ShootDecoration(Camera gameCamera, GameObject prefab, Vector3 decorationPosition)
     {
         Vector2 mousePos = GetGameCameraMousePosition();
 
-        Vector3 aim = camera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, 5.0f));
-        Vector3 mouseDirection = aim - camera.transform.position;
+        Vector3 aim = gameCamera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, 100.0f));
+        Vector3 mouseDirection = aim - gameCamera.transform.position;
 
-        GameObject snowball = Instantiate(decorationProjectiles[activeDecorationIndex], bucketTransform.position + bucketTransform.forward * 0.3f, Quaternion.identity);
+        if (Physics.Raycast(gameCamera.transform.position, mouseDirection, out RaycastHit hit, 20.0f))
+        {
+            aim = hit.point;
+        }
+
+        mouseDirection = aim - decorationPosition;
+
+        GameObject snowball = Instantiate(prefab, decorationPosition, Quaternion.identity);
         snowball.transform.LookAt(aim);
         Rigidbody b = snowball.GetComponent<Rigidbody>();
         b.AddForce(mouseDirection.normalized * 500f);
