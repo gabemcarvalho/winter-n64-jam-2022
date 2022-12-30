@@ -9,11 +9,12 @@ public class CameraController : MonoBehaviour
     public static Action EventDisableTitleCamera;
     public static Action<Transform> EventEnableMiniGame;
     public static Action EventDisableMiniGame;
+    public static Action<float> EventSetCameraSensitivity;
+    public static Action<bool> EventInvertX;
+    public static Action<bool> EventInvertY;
 
     [SerializeField] Vector3 normalCameraOffset = new Vector3(0, 0.5f, 0);
     [SerializeField] float targetChangeLerp = 0.1f;
-    [SerializeField] float xSensitivity = 1.5f;
-    [SerializeField] float ySensitivity = 1.0f;
 
     public ThirdPersonCamera.CameraController cameraController;
     public ThirdPersonCamera.FreeForm freeForm;
@@ -25,6 +26,8 @@ public class CameraController : MonoBehaviour
     public MiniGameCamera miniGameCamera;
     public Vector3 cameraOffsetTarget;
 
+    private bool invertX;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -35,9 +38,6 @@ public class CameraController : MonoBehaviour
         cutsceneCamera = GetComponent<CutsceneCamera>();
         titleScreenCamera = GetComponent<TitleScreenCamera>();
         miniGameCamera = GetComponent<MiniGameCamera>();
-
-        cameraInput.mouseSensitivity.x = xSensitivity;
-        cameraInput.mouseSensitivity.y = ySensitivity;
 
         UIActions.EventPauseGame += DisableCamera;
         UIActions.EventResumeGame += EnableCamera;
@@ -55,7 +55,11 @@ public class CameraController : MonoBehaviour
         EventDisableTitleCamera += DisableTitleCamera;
         EventEnableMiniGame += EnableMiniGame;
         EventDisableMiniGame += DisableMiniGame;
-        
+        EventSetCameraSensitivity += SetCameraSensitivity;
+        EventInvertX += InvertX;
+        EventInvertY += InvertY;
+
+        invertX = false;
     }
 
     void OnDestroy()
@@ -168,5 +172,31 @@ public class CameraController : MonoBehaviour
         //EnableCamera();
         miniGameCamera.enabled = false;
 
+    }
+
+    public void SetCameraSensitivity(float sensitivity)
+    {
+        cameraInput.mouseSensitivity.x = sensitivity;
+        cameraInput.mouseSensitivity.y = sensitivity * 0.666666f;
+
+        if (invertX)
+        {
+            cameraInput.mouseSensitivity.x *= -1;
+        }
+    }
+
+    public void InvertX(bool invert)
+    {
+        invertX = invert;
+        cameraInput.mouseSensitivity.x = Mathf.Abs(cameraInput.mouseSensitivity.x);
+        if (invertX)
+        {
+            cameraInput.mouseSensitivity.x *= -1;
+        }
+    }
+    
+    public void InvertY(bool invert)
+    {
+        cameraInput.mouseInvertY = invert;
     }
 }
